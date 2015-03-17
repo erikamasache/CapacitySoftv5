@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Capacitados _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <div class="contenedor">
+                    <h:form id="atras">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="miCapacitacion?faces-redirect=true"/>
+                    </h:form>
+                    <h3 class="titulos_tablas"><p:outputLabel value="Capacitacion #{capacitadosBean.capacitacion.tema}"/></h3> 
+                    <h2 class="titulos_tablas">Capacitados</h2>                                    
+                    <div class="botones">
+                        <h:form id="crear">
+                            <p:commandButton id="selectCrear" update=":formCrear" 
+                                             oncomplete="PF('Crear').show();" value="Crear">
+                            </p:commandButton>
+                        </h:form>
+                    </div>
+                    <h:form id="formCapacitadosTable">
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="cap"
+                                     value="#{capacitadosBean.listaCapacitados}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:24%">
+                                <f:facet name="header">Nombres</f:facet>
+                                <h:outputText value="#{cap.nombre}" />
+                            </p:column>
+
+                            <p:column style="width:24%">
+                                <f:facet name="header">Apellidos</f:facet>
+                                <h:outputText value="#{cap.apellido}" />
+                            </p:column>
+
+                            <p:column style="width:10%">
+                                <f:facet name="header">Identificación</f:facet>
+                                <h:outputText value="#{cap.cedula}" />
+                            </p:column> 
+
+                            <p:column style="width:7%">
+                                <f:facet name="header">Tipo</f:facet>
+                                <h:outputText value="#{cap.tipoCapacitadoid.nombre}" />                             
+                            </p:column>
+
+                            <p:column style="width:10%">
+                                <f:facet name="header">Celular</f:facet>
+                                <h:outputText value="#{cap.celular}" />                             
+                            </p:column>
+
+                            <p:column style="width:22%" headerText="Celular">
+                                <f:facet name="header">E-mail</f:facet>
+                                <h:outputText value="#{cap.correo}" />                             
+                            </p:column> 
+
+                            <p:column style="width:7.5em"> 
+                                <p:commandButton id="modalVer" update=":formVer" icon="ui-icon-contact" oncomplete="PF('Ver').show();" 
+                                                 title="Ver Datos">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{editarCapacitadoBean.capacitado}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="modalEditar" update=":formEditar" icon="ui-icon-pencil" oncomplete="PF('Editar').show();" 
+                                                 title="Editar Datos">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{editarCapacitadoBean.capacitado}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="selectEliminar" update=":formEliminar" 
+                                                 oncomplete="PF('Eliminar').show();" icon="ui-icon-trash" title="Eliminar" >
+                                    <f:setPropertyActionListener value="#{cap}" target="#{editarCapacitadoBean.capacitado}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable> 
+                    </h:form>
+
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear un Capacitado _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrear">
+                    <p:dialog header="Nuevo Capacitado" widgetVar="Crear" modal="true" height="500" width="390">   
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombres" value="Nombres:"/>
+                            <p:inputText id="nombres"  value="#{capacitadosBean.capacitado.nombre}" required="true" 
+                                         label="Nombres" requiredMessage="Especifique el nombre del capacitado" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="apellidos" value="Apellidos:"/>
+                            <p:inputText id="apellidos"  value="#{capacitadosBean.capacitado.apellido}" required="true" 
+                                         label="Apellidos" requiredMessage="Especifique el apellido del capacitado" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="cedula" value="Tipo de identificación:" />
+                            <p:selectOneMenu value="#{capacitadosBean.capacitado.tipoIdentificacion}" style="width:100%;">
+                                <f:selectItem itemLabel="Cédula" itemValue="1"/>
+                                <f:selectItem itemLabel="Pasaporte" itemValue="2"/>
+                            </p:selectOneMenu>
+                            <!--  -->
+                            <p:inputText id="cedula" value="#{capacitadosBean.capacitado.cedula}" required="true" 
+                                         label="Cedula" requiredMessage="Especifique la cédula del capacitado"
+                                         onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel value="Historia clínica:" />
+                            <p:inputText  value="#{capacitadosBean.capacitado.numHistoriaClinica}" 
+                                          onkeypress="return validarHistoriaClinica(event)" />
+                            <p:outputLabel for="direccion" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{capacitadosBean.capacitado.direccion}" required="true" 
+                                         label="Direccion" requiredMessage="Especifique la dirección del capacitado"
+                                         onkeypress="return validarDireccion(event)"/>
+                            <p:outputLabel value="Teléfono domiciliario:" />
+                            <p:inputMask value="#{capacitadosBean.capacitado.telefonoDomicilio}" mask="(099) 999-999" />
+                            <p:outputLabel for="celular" value="Celular:" />
+                            <p:inputMask id="celular" value="#{capacitadosBean.capacitado.celular}" mask="0999-999-999" 
+                                         required="true" label="Celular" 
+                                         requiredMessage="Especifique el celular del capacitado"/>
+                            <p:outputLabel for="correo" value="E-mail:" />
+                            <p:inputText id="correo" value="#{capacitadosBean.capacitado.correo}" required="true" 
+                                         label="Correo" requiredMessage="Especifique el correo del capacitado" 
+                                         onchange="validarEmail(this)" />
+                            <p:outputLabel for="cargo" value="Cargo:" />
+                            <p:inputText id="cargo" value="#{capacitadosBean.capacitado.cargo}" required="true" 
+                                         label="Cargo" requiredMessage="Especifique el cargo del capacitado" 
+                                         onkeypress="return validarLetras(event)"/>  
+                            <p:outputLabel for="sector" value="Sector:"/>
+                            <p:selectOneMenu converter="sectorConverter" id="sector" value="#{capacitadosBean.capacitado.sectorId}" 
+                                             style="width:100%;" required="true" label="Sector" filter=""
+                                             requiredMessage="Especifique el sector al que pertenece el capacitado">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItems value="#{sectorBean.listaSectores}" var="sector" 
+                                               itemLabel="#{sector.nombre}" itemValue="#{sector}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="tipo" value="Tipo:"/>
+                            <p:selectOneMenu converter="tipoConverter" id="tipo" value="#{capacitadosBean.capacitado.tipoCapacitadoid}" 
+                                             style="width:100%;" required="true" label="Tipo" 
+                                             requiredMessage="Especifique el tipo al que pertenece el capacitado">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItems value="#{tipoCapacitadoBean.listaTipoCapacitados}" var="tipo" 
+                                               itemLabel="#{tipo.nombre}" itemValue="#{tipo}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="telefonoOfinica" value="Teléfono oficina:" />
+                            <p:inputMask id="telefonoOfinica" value="#{capacitadosBean.capacitado.telefonoOficina}" mask="(099) 999-999"  />
+                            <p:outputLabel value="Extensión oficina:" />
+                            <p:inputText value="#{capacitadosBean.capacitado.extTelefonoOficina}" onkeydown="return validarNumeros(event)"/>
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1 :formCapacitadosTable" action="#{capacitadosBean.guardarCapacitado()}" value="Guardar"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Capacitado _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver un Capacitado _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVer">
+                    <p:dialog header="Datos Capacitado" widgetVar="Ver" modal="true" height="460" width="350">
+                        <h:panelGrid class="panel" columns="2" >
+                            <h:outputLabel style="font-weight:bold;" value="Nombres: " />
+                            <h:outputText value="#{capacitadoBean.capacitado.nombre}" /> 
+                            <h:outputLabel style="font-weight:bold;" value="Apellidos:"  />
+                            <h:outputText value="#{capacitadoBean.capacitado.apellido}" />
+                            <h:outputLabel style="font-weight:bold;" value="Identificación:" />
+                            <h:outputText value="#{capacitadoBean.capacitado.cedula}" />
+                            <h:outputLabel style="font-weight:bold;" value="Historia clínica:" />
+                            <h:outputText value="#{capacitadoBean.capacitado.numHistoriaClinica}" />
+                            <h:outputLabel style="font-weight:bold;" value="Dirección:" />
+                            <h:outputText value="#{capacitadoBean.capacitado.direccion}" />
+                            <h:outputLabel style="font-weight:bold;" value="Teléfono domicilio:"/>
+                            <h:outputText value="#{capacitadoBean.capacitado.telefonoDomicilio}" />
+                            <h:outputLabel style="font-weight:bold;" value="Celular:"/>
+                            <h:outputText value="#{capacitadoBean.capacitado.celular}" />
+                            <h:outputLabel style="font-weight:bold;" value="Correo:" />
+                            <h:outputText value="#{capacitadoBean.capacitado.correo}" />
+                            <h:outputLabel style="font-weight:bold;" value="Cargo:" />
+                            <h:outputText value="#{capacitadoBean.capacitado.cargo}" />
+                            <h:outputLabel style="font-weight:bold;" value="Sector:" />
+                            <h:outputText value="#{capacitadoBean.capacitado.sectorId.nombre}" />
+                            <h:outputLabel style="font-weight:bold;" value="Tipo:" />
+                            <h:outputText value="#{capacitadoBean.capacitado.tipoCapacitadoid.nombre}" />
+                            <h:outputLabel style="font-weight:bold;" value="Teléfono oficina:" />
+                            <h:outputText value="#{capacitadoBean.capacitado.telefonoOficina}" />
+                            <h:outputLabel style="font-weight:bold;" value="Extención oficina:" />
+                            <h:outputText value="#{capacitadoBean.capacitado.extTelefonoOficina}" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver un Capacitado  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Editar un Capacitado _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEditar">
+                    <p:dialog header="Editar Capacitado" widgetVar="Editar" modal="true" height="500" width="400">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombres" value="Nombres:"/>
+                            <p:inputText id="nombres"  value="#{capacitadoBean.capacitado.nombre}" 
+                                         required="true" label="Nombres" requiredMessage="Especifique el nombre del 
+                                         capacitado" onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="apellidos" value="Apellidos:"/>
+                            <p:inputText id="apellidos"  value="#{capacitadoBean.capacitado.apellido}" 
+                                         required="true" label="Apellidos" requiredMessage="Especifique el apellido del 
+                                         capacitado" onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="cedula" value="Tipo de identificación:" />
+                            <p:selectOneMenu value="#{capacitadoBean.capacitado.tipoIdentificacion}" 
+                                             style="width:100%;">
+                                <f:selectItem itemLabel="Cédula" itemValue="1"/>
+                                <f:selectItem itemLabel="Pasaporte" itemValue="2"/>
+                            </p:selectOneMenu>
+                            <!--  -->
+                            <p:inputText id="cedula" value="#{capacitadoBean.capacitado.cedula}" 
+                                         required="true" label="Cedula" requiredMessage="Especifique la identificación del 
+                                         capacitado" onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel value="Historia clínica:" />
+                            <p:inputText value="#{capacitadoBean.capacitado.numHistoriaClinica}" 
+                                         onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel for="direccion" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{capacitadoBean.capacitado.direccion}" 
+                                         required="true" label="Direccion" requiredMessage="Especifique la dirección del 
+                                         capacitado" onkeypress="return validarDireccion(event)"/>
+                            <p:outputLabel value="Teléfono domiciliario:" />
+                            <p:inputMask value="#{capacitadoBean.capacitado.telefonoDomicilio}" 
+                                         mask="(099) 999-999" />
+                            <p:outputLabel for="celular" value="Celular:" />
+                            <p:inputMask id="celular" value="#{capacitadoBean.capacitado.celular}" 
+                                         mask="0999-999-999" required="true" label="Celular" requiredMessage="Especifique 
+                                         el celular del capacitado"/>
+                            <p:outputLabel for="correo" value="E-mail:" />
+                            <p:inputText id="correo" value="#{capacitadoBean.capacitado.correo}" 
+                                         required="true" label="Correo" requiredMessage="Especifique el correo del capacitado" 
+                                         onchange="validarEmail(this)"/>
+                            <p:outputLabel for="cargo" value="Cargo:" />
+                            <p:inputText id="cargo" value="#{capacitadoBean.capacitado.cargo}" 
+                                         required="true" label="Cargo" requiredMessage="Especifique el cargo del capacitado" 
+                                         onkeypress="return validarLetras(event)"/>  
+                            <p:outputLabel for="sector" value="Sector:"/>
+                            <p:selectOneMenu id="sector"  value="#{capacitadoBean.capacitado.sectorId}" 
+                                             converter="sectorConverter" effect="fold" style="width:170px;" required="true" 
+                                             label="Sector" requiredMessage="Especifique el sector al que pertenece el capacitado">
+                                <f:selectItems value="#{sectorBean.listaSectores}" var="sect" 
+                                               itemLabel="#{sect.nombre}" itemValue="#{sect}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="tipo" value="Tipo:"/>
+                            <p:selectOneMenu converter="tipoConverter" id="tipo" value="#{editarCapacitadoBean.capacitado.tipoCapacitadoid}" 
+                                             style="width:100%;" required="true" label="Tipo" 
+                                             requiredMessage="Especifique el tipo al que pertenece el capacitado">
+                                <f:selectItems value="#{tipoCapacitadoBean.listaTipoCapacitados}" var="tipo" 
+                                               itemLabel="#{tipo.nombre}" itemValue="#{tipo}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="telefonoOfinica" value="Teléfono oficina:" />
+                            <p:inputMask value="#{capacitadoBean.capacitado.telefonoOficina}" 
+                                         mask="(099) 999-999" id="telefonoOfinica" />
+                            <p:outputLabel value="Extensión oficina:" />
+                            <p:inputText value="#{capacitadoBean.capacitado.extTelefonoOficina}" 
+                                         onkeydown="return validarNumeros(event)"/>
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1 :formCapacitadosTable" action="#{capacitadoBean.editarCapacitado()}" 
+                                             value="Guardar" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Editar un Capacitado  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar un Capacitado _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminar">
+                    <p:dialog header="Eliminar Capacitado" widgetVar="Eliminar" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="¿Está seguro de eliminar al capacitado &nbsp; 
+                                           #{capacitadoBean.capacitado.nombre}?" />
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton update=":formCapacitadosTable" action="#{capacitadoBean.eliminarCapacitado()}" 
+                                             value="Eliminar" onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar un Capacitado _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

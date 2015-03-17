@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Capacitados _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <div class="contenedor">
+                    <h:form id="atras1" rendered="#{request.isUserInRole('Administrador')}">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="listaCapacitaciones?faces-redirect=true"/>
+                    </h:form>
+                    <h:form id="atras" rendered="#{request.isUserInRole('Capacitador')}">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="./../capacitador/miCapacitacion?faces-redirect=true"/>
+                    </h:form>
+                    <h3 class="titulos_tablas"><p:outputLabel value="Capacitacion #{registradosBean.capacitacion.tema}"/></h3> 
+                    <h2 class="titulos_tablas">Registrados</h2> 
+                    <h:form id="formTable">
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="asis"
+                                     value="#{registradosBean.listaRegistrados}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:24%">
+                                <f:facet name="header">Nombre</f:facet>
+                                <h:outputText value="#{asis.capacitadoId.nombre}" />
+                            </p:column>
+
+                            <p:column style="width:24%">
+                                <f:facet name="header">Apellidos</f:facet>
+                                <h:outputText value="#{asis.capacitadoId.apellido}" />
+                            </p:column>
+
+                            <p:column style="width:10%">
+                                <f:facet name="header">Identificación</f:facet>
+                                <h:outputText value="#{asis.capacitadoId.cedula}" />
+                            </p:column> 
+
+                            <p:column style="width:7%">
+                                <f:facet name="header">Tipo</f:facet>
+                                <h:outputText value="#{asis.capacitadoId.tipoCapacitadoid.nombre}" />                             
+                            </p:column>
+
+                            <p:column style="width:10%">
+                                <f:facet name="header">Celular</f:facet>
+                                <h:outputText value="#{asis.capacitadoId.celular}" />                             
+                            </p:column>
+
+                            <p:column style="width:5%" headerText="Asistio">
+                                <h:outputText value="#{asis.asistencia}" />
+                            </p:column>
+
+                            <p:column style="width:5.7em"> 
+                                <h:form id="formCap">                    
+                                    <p:commandButton id="modalAsistencia" update=":formAsistencia" icon="ui-icon-contact"  
+                                                     title="Asistió" oncomplete="PF('Asistencia').show();">
+                                        <f:setPropertyActionListener value="#{asis}" target="#{registradosBean.registra}"/>
+                                    </p:commandButton>
+                                    <p:commandButton id="modalEvaluacion" update=":formEvaluacionCapacitado" icon="ui-icon-contact"  
+                                                     title="Resultados" oncomplete="PF('EvaluacionCapacitado').show();">
+                                        <f:setPropertyActionListener value="#{asis}" target="#{registradosBean.registra}"/>
+                                    </p:commandButton>
+                                </h:form>
+                            </p:column>
+
+                        </p:dataTable> 
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal marcar asistencia _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formAsistencia">
+                    <p:dialog header="Asistencia" widgetVar="Asistencia" modal="true" height="150" draggable="false">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2">
+                            <p:outputLabel value="Capatación: " />
+                            <p:outputLabel value="#{registradosBean.capacitacion.tema}"/>
+                            <p:outputLabel value="Nombre:" />
+                            <p:outputLabel value="#{registradosBean.registra.capacitadoId.nombre} #{registradosBean.registra.capacitadoId.apellido}"/>
+                            <p:outputLabel value="Asistió:" />
+                            <p:selectOneMenu style="width: 100px" value="#{registradosBean.registra.asistencia}">
+                                <f:selectItem itemLabel="Si" itemValue="si" />
+                                <f:selectItem itemLabel="No" itemValue="no" />
+                            </p:selectOneMenu>
+                            <p:commandButton update="msgs1 :formTable" value="Salir" onclick = "reload()"/>
+                            <p:commandButton update="msgs1 :formTable" value="Guardar" actionListener="#{registradosBean.guardarAsistencia()}" onclick = "reload()"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Documento _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                 <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal marcar asistencia _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEvaluacionCapacitado">
+                    <p:dialog header="Evaluación" widgetVar="EvalucionCapacitado" modal="true" height="150" draggable="false">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2">
+                            <p:outputLabel value="Capatación: " />
+                            <p:outputLabel value="#{registradosBean.capacitacion.tema}"/>
+                            <p:outputLabel value="Fecha:" />
+                            <p:outputLabel value="#{registradosBean.evaluacionCapacitado.fecha}"/>
+                            <p:outputLabel value="Calificacion:" />
+                            
+                            <p:commandButton update="msgs1 :formTable" value="Salir" onclick = "reload()"/>
+                            <p:commandButton update="msgs1 :formTable" value="Guardar"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Documento _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

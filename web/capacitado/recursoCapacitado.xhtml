@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Recursos _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h3 class="titulos_tablas">Videos</h3>
+                    <h:form id="formRecursosCap">  
+
+                        <p:dataTable widgetVar="capTable" id="dataTableVid" var="rec"
+                                     value="#{recursoBean.listaVideos}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:20%" headerText="Nombres">
+                                <f:facet name="header">Video</f:facet>
+                                <p:media value="#{rec.pathVideo}" width="220" player="flash"/>
+                            </p:column>                        
+
+                            <p:column style="width:20%">
+                                <f:facet name="header">Nombre</f:facet>
+                                <p:outputLabel value="#{rec.nombre}" />
+                            </p:column>
+
+                            <p:column style="width:20%">
+                                <f:facet name="header">Autor</f:facet>
+                                <p:outputLabel value="#{rec.autor}" />
+                            </p:column>
+
+                            <p:column style="width:30%">
+                                <f:facet name="header">Enlace a compartir</f:facet>
+                                <p:outputLabel value="#{rec.pathVideo}" />
+                            </p:column>
+
+                            <!-- lista de iconos  jqueryui.com/themeroller/
+                           http://www.petefreitag.com/cheatsheets/jqueryui-icons/
+                           http://jquery-ui.googlecode.com/svn/tags/1.6rc5/tests/static/icons.html -->   
+
+                            <p:column style="width:1em"> 
+                                <p:commandLink id="selectVer" update=":formVerVideo" oncomplete="PF('VerVideo').show();" 
+                                               title="Ver Datos">
+                                    <h:outputText styleClass="ui-icon ui-icon-contact" />
+                                    <f:setPropertyActionListener value="#{rec}" target="#{recursoBean.recurso}"/>
+                                </p:commandLink>                                
+                            </p:column>
+
+                        </p:dataTable> 
+                    </h:form>
+
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Recursos _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver un Recurso _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVerVideo">
+                    <p:dialog header="Datos del video" widgetVar="VerVideo" modal="true" height="150" width="500">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Nombre: " />
+                            <p:outputLabel value="#{recursoBean.recurso.nombre}" /> 
+                            <p:outputLabel value="Autor: " />
+                            <p:outputLabel value="#{recursoBean.recurso.autor}" /> 
+                            <p:outputLabel value="Enlace video: " />
+                            <p:outputLabel value="#{recursoBean.recurso.pathVideo}" /> 
+                            <p:outputLabel value="Descripción: " />
+                            <p:outputLabel value="#{recursoBean.recurso.descripcion}" /> 
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver un Recurso  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Documentos _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h3 class="titulos_tablas">Documentos</h3>
+                    <h:form id="formRecursosCapDoc">
+                        <p:dataTable widgetVar="capTable" id="dataTableDoc" var="rec"
+                                     value="#{recursoBean.listaDocumentos}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:20%">
+                                <f:facet name="header">Documento</f:facet>
+                                <a target="_blank" href="#{rec.pathPdf}">
+                                    <h:outputText value="#{rec.nombre}" />
+                                </a>
+                            </p:column>  
+
+                            <p:column style="width:20%">
+                                <f:facet name="header">Autor</f:facet>
+                                <p:outputLabel value="#{rec.autor}" />
+                            </p:column>
+
+                            <p:column style="width:40%">
+                                <f:facet name="header">Enlace a compartir</f:facet>
+                                <p:outputLabel value="#{rec.pathPdf}" />
+                            </p:column>
+
+                            <!-- lista de iconos  jqueryui.com/themeroller/
+                           http://www.petefreitag.com/cheatsheets/jqueryui-icons/
+                           http://jquery-ui.googlecode.com/svn/tags/1.6rc5/tests/static/icons.html -->   
+
+                            <p:column style="width:0.8em"> 
+                                <p:commandLink id="selectVer" update=":formVerDoc" oncomplete="PF('VerDoc').show();" 
+                                               title="Ver Datos">
+                                    <h:outputText styleClass="ui-icon ui-icon-contact" />
+                                    <f:setPropertyActionListener value="#{rec}" target="#{recursoBean.recurso}"/>
+                                </p:commandLink>
+                            </p:column>
+
+                        </p:dataTable> 
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Recursos _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver un Recurso _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVerDoc">
+                    <p:dialog header="Datos del Documento" widgetVar="VerDoc" modal="true" height="150" width="500">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Nombre: " />
+                            <p:outputLabel value="#{recursoBean.recurso.nombre}" /> 
+                            <p:outputLabel value="Autor: " />
+                            <p:outputLabel value="#{recursoBean.recurso.autor}" /> 
+                            <p:outputLabel value="Enlace pdf: " />
+                            <p:outputLabel value="#{recursoBean.recurso.pathPdf}" /> 
+                            <p:outputLabel value="Descripción: " />
+                            <p:outputLabel value="#{recursoBean.recurso.descripcion}" /> 
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver un Recurso  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

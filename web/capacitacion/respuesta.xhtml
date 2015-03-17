@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Carreras _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h:form id="atras">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="#{evaluacionBean.preguntaBean.obtenerEvaluacion()}"/>
+                    </h:form>
+                    <h3 class="titulos_tablas">Lista de Respuestas</h3>
+                    <div class="botones">
+                        <h:form id="crear">
+                            <p:commandButton id="selectCrear" update=":formCrear" actionListener="#{respuestaBean.instanciarRespuesta()}"
+                                             oncomplete="PF('Crear').show();" value="Crear" 
+                                             onclick="#{evaluacionBean.preguntaBean.respuestaBean.numeroRespuestas()}">
+                            </p:commandButton>
+                        </h:form>                                      
+                    </div>
+                    <h:form id="formRespuesta">
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="resp"
+                                     value="#{evaluacionBean.preguntaBean.respuestaBean.listaRespuestas}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:90%" headerText="Descripción">
+                                <h:outputText value="#{resp.descripcion}" />
+                            </p:column>
+
+                            <p:column style="width:10%" headerText="Correcta">
+                                <p:outputLabel value="#{resp.correcto}"  >
+                                </p:outputLabel>
+                            </p:column> 
+
+                            <p:column style="width:7.5em"> 
+                                <p:commandButton id="modalVer" update=":formVer" icon="ui-icon-contact" oncomplete="PF('Ver').show();" title="Ver Datos">
+                                    <f:setPropertyActionListener value="#{resp}" target="#{evaluacionBean.preguntaBean.respuestaBean.respuesta}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="modalEditar" update=":formEditar" icon="ui-icon-pencil" oncomplete="PF('Editar').show();" title="Editar Datos">
+                                    <f:setPropertyActionListener value="#{resp}" target="#{evaluacionBean.preguntaBean.respuestaBean.respuesta}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="selectEliminar" update=":formEliminar" 
+                                                 oncomplete="PF('Eliminar').show();" icon="ui-icon-trash" title="Eliminar" >
+                                    <f:setPropertyActionListener value="#{resp}" target="#{evaluacionBean.preguntaBean.respuestaBean.respuesta}"/>
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable> 
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Carreras _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrear">
+                    <p:dialog header="Nueva Respuesta" widgetVar="Crear" modal="true" height="120">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="descripcion" value="Respuesta:"/>
+                            <p:inputText id="descripcion" value="#{evaluacionBean.preguntaBean.respuestaBean.respuesta.descripcion}"/> 
+                            <h:outputText value="Correcto: " />
+                            <p:selectBooleanCheckbox value="#{evaluacionBean.preguntaBean.respuestaBean.respuesta.correcto}">
+                                <p:ajax update="msgs1" listener="#{respuestaBean.addMessage}" />
+                            </p:selectBooleanCheckbox>
+                            <p:commandButton value="Limpiar" type="reset" />
+                            <p:commandButton update="msgs1 :formRespuesta" action="#{evaluacionBean.preguntaBean.respuestaBean.guardarRespuesta()}" value="Guardar" onclick="reload()"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVer">
+                    <p:dialog header="Datos de la respuesta" widgetVar="Ver" modal="true" height="50">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel style="font-weight:bold;" value="Descripción: " />
+                            <p:outputLabel value="#{evaluacionBean.preguntaBean.respuestaBean.respuesta.descripcion}" /> 
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver una Carrera  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Editar una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEditar">
+                    <p:dialog header="Editar respuesta" widgetVar="Editar" modal="true" height="180">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="descripcion" value="Respuesta:"/>
+                            <p:inputText id="descripcion" value="#{evaluacionBean.preguntaBean.respuestaBean.respuesta.descripcion}"/> 
+                            <h:outputText value="Correcto: " />
+                            <p:selectBooleanCheckbox value="#{evaluacionBean.preguntaBean.respuestaBean.respuesta.correcto}">
+                                <p:ajax update="msgs1" listener="#{respuestaBean.addMessage}" />
+                            </p:selectBooleanCheckbox>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton update="msgs1 :formRespuesta" action="#{evaluacionBean.preguntaBean.respuestaBean.editarRespuesta()}" value="Editar"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Editar una Carrera  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminar">
+                    <p:dialog header="Eliminar respuesta" widgetVar="Eliminar" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <h:outputLabel value="Está seguro de eliminar la respuesta"/>
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton action="#{evaluacionBean.preguntaBean.respuestaBean.eliminarRespuesta()}" value="Aceptar"  onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

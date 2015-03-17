@@ -1,0 +1,295 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Recursos _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h:form id="atras1" rendered="#{request.isUserInRole('Administrador')}">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="listaCapacitaciones?faces-redirect=true"/>
+                    </h:form>
+                    <h:form id="atras" rendered="#{request.isUserInRole('Capacitador')}">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="miCapacitacion?faces-redirect=true"/>
+                    </h:form>
+                    <h3 class="titulos_tablas">Videos</h3>
+                    <div class="botones">
+                        <h:form id="crear">
+                            <p:commandButton id="selectCrear" update=":formCrearVideo" 
+                                             oncomplete="PF('CrearVideo').show();" value="Crear">
+                            </p:commandButton>
+                        </h:form>
+                    </div>
+                    <p:dataTable widgetVar="capTable" id="dataTableVid" var="rec"
+                                 value="#{recursosBean.listaVideos}" paginator="true"
+                                 rows="5"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                 {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                        <p:column style="width:20%" headerText="Nombres">
+                            <f:facet name="header">Video</f:facet>
+                            <p:media value="http://www.youtube.com/v/#{rec.pathVideo}" width="220" player="flash"/>
+                        </p:column>                        
+
+                        <p:column style="width:20%">
+                            <f:facet name="header">Nombre</f:facet>
+                            <h:outputText value="#{rec.nombre}" />
+                        </p:column>
+
+                        <p:column style="width:20%">
+                            <f:facet name="header">Autor</f:facet>
+                            <p:outputLabel value="#{rec.autor}" />
+                        </p:column>
+
+                        <p:column style="width:30%">
+                            <f:facet name="header">Enlace a compartir</f:facet>
+                            <p:outputLabel value="https://www.youtube.com/watch?v=#{rec.pathVideo}" />
+                        </p:column>
+
+                        <!-- lista de iconos  jqueryui.com/themeroller/
+                       http://www.petefreitag.com/cheatsheets/jqueryui-icons/
+                       http://jquery-ui.googlecode.com/svn/tags/1.6rc5/tests/static/icons.html -->   
+
+                        <p:column style="width:1em"> 
+                            <h:form id="formVerCap">  
+                                <p:commandLink id="selectVer" update=":formVerVideo" oncomplete="PF('VerVideo').show();" 
+                                               title="Ver Datos">
+                                    <h:outputText styleClass="ui-icon ui-icon-contact" />
+                                    <f:setPropertyActionListener value="#{rec}" target="#{editarRecursoBean.recurso}"/>
+                                </p:commandLink>
+                                <p:commandLink id="selectEditar" update=":formEditarVideo" oncomplete="PF('EditarVideo').show();"
+                                               title="Editar Datos">
+                                    <h:outputText styleClass="ui-icon ui-icon-pencil"  />
+                                    <f:setPropertyActionListener value="#{rec}" target="#{editarRecursoBean.recurso}"/>
+                                </p:commandLink>
+                                <p:commandLink id="selectEliminar" update=":formEliminarVideo"  oncomplete="PF('EliminarVideo').show();"
+                                               title="Eliminar" >
+                                    <h:outputText styleClass="ui-icon ui-icon-trash" />
+                                    <f:setPropertyActionListener value="#{rec}" target="#{editarRecursoBean.recurso}"/>
+                                </p:commandLink>
+
+                            </h:form>
+                        </p:column>
+
+                    </p:dataTable> 
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Recursos _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver un Recurso _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVerVideo">
+                    <p:dialog header="Datos del video" widgetVar="VerVideo" modal="true" height="150" width="500">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Nombre: " />
+                            <p:outputLabel value="#{editarRecursoBean.recurso.nombre}" /> 
+                            <p:outputLabel value="Autor: " />
+                            <p:outputLabel value="#{editarRecursoBean.recurso.autor}" /> 
+                            <p:outputLabel value="Enlace video: " />
+                            <p:outputLabel value="#{editarRecursoBean.recurso.pathVideo}" /> 
+                            <p:outputLabel value="Descripción: " />
+                            <p:outputLabel value="#{editarRecursoBean.recurso.descripcion}" /> 
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver un Recurso  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Editar un Recurso _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEditarVideo">
+                    <p:dialog header="Editar el recurso" widgetVar="EditarVideo" modal="true" height="220">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Nombre: " />
+                            <p:inputText value="#{editarRecursoBean.recurso.nombre}" />
+                            <p:outputLabel value="Autor: " />
+                            <p:inputText value="#{editarRecursoBean.recurso.autor}" /> 
+                            <p:outputLabel value="Enlace video: " />
+                            <p:inputText value="#{editarRecursoBean.recurso.pathVideo}" /> 
+                            <p:outputLabel value="Descripción: " />
+                            <p:inputTextarea value="#{editarRecursoBean.recurso.descripcion}" /> 
+                            <p:commandButton value="Cancelar" onclick="reload()"/>
+                            <p:commandButton action="#{editarRecursoBean.editarRecurso()}" value="Guardar"  onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Editar un Recurso  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar un Recurso _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminarVideo">
+                    <p:dialog header="Eliminar video" widgetVar="EliminarVideo" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Está seguro de eliminar &nbsp; #{editarRecursoBean.recurso.nombre}" />
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton action="#{editarRecursoBean.eliminarRecurso()}" value="Aceptar" update=":dataTableVid"  onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar un Recurso  _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Documentos _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h3 class="titulos_tablas">Documentos</h3>
+                    <div class="botones">
+                        <h:form id="crearDoc">
+                            <p:commandButton id="selectDocumento" update=":formCrearDocumento" 
+                                             oncomplete="PF('CrearDocumento').show();" value="Crear"/>
+                        </h:form>
+                    </div>
+                    <p:dataTable widgetVar="capTable" id="dataTableDoc" var="rec"
+                                 value="#{recursosBean.listaDocumentos}" paginator="true"
+                                 rows="10"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                 {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                        <p:column style="width:20%">
+                            <f:facet name="header">Documento</f:facet>
+                            <a target="_blank" href="#{rec.pathPdf}">
+                                <h:outputText value="#{rec.nombre}" />
+                            </a>
+                        </p:column>  
+
+                        <p:column style="width:20%">
+                            <f:facet name="header">Autor</f:facet>
+                            <p:outputLabel value="#{rec.autor}" />
+                        </p:column>
+
+                        <p:column style="width:40%">
+                            <f:facet name="header">Enlace a compartir</f:facet>
+                            <p:outputLabel value="#{rec.pathPdf}" />
+                        </p:column>
+
+                        <!-- lista de iconos  jqueryui.com/themeroller/
+                       http://www.petefreitag.com/cheatsheets/jqueryui-icons/
+                       http://jquery-ui.googlecode.com/svn/tags/1.6rc5/tests/static/icons.html -->   
+
+                        <p:column style="width:0.8em"> 
+                            <h:form id="formVerCap"> 
+                                <p:commandLink id="selectVer" update=":formVerDoc" oncomplete="PF('VerDoc').show();" 
+                                               title="Ver Datos">
+                                    <h:outputText styleClass="ui-icon ui-icon-contact" />
+                                    <f:setPropertyActionListener value="#{rec}" target="#{editarRecursoBean.recurso}"/>
+                                </p:commandLink>
+                                <p:commandLink id="selectEditar" update=":formEditarDoc" oncomplete="PF('EditarDoc').show();"
+                                               title="Editar Datos">
+                                    <h:outputText styleClass="ui-icon ui-icon-pencil"  />
+                                    <f:setPropertyActionListener value="#{rec}" target="#{editarRecursoBean.recurso}"/>
+                                </p:commandLink>
+                                <p:commandLink id="selectEliminar" update=":formEliminarDoc"  oncomplete="PF('EliminarDoc').show();"
+                                               title="Eliminar" >
+                                    <h:outputText styleClass="ui-icon ui-icon-trash" />
+                                    <f:setPropertyActionListener value="#{rec}" target="#{editarRecursoBean.recurso}"/>
+                                </p:commandLink>
+                            </h:form>
+                        </p:column>
+
+                    </p:dataTable> 
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Recursos _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver un Recurso _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVerDoc">
+                    <p:dialog header="Datos del Documento" widgetVar="VerDoc" modal="true" height="150" width="500">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Nombre: " />
+                            <p:outputLabel value="#{editarRecursoBean.recurso.nombre}" /> 
+                            <p:outputLabel value="Autor: " />
+                            <p:outputLabel value="#{editarRecursoBean.recurso.autor}" /> 
+                            <p:outputLabel value="Enlace pdf: " />
+                            <p:outputLabel value="#{editarRecursoBean.recurso.pathPdf}" /> 
+                            <p:outputLabel value="Descripción: " />
+                            <p:outputLabel value="#{editarRecursoBean.recurso.descripcion}" /> 
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver un Recurso  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Editar un Recurso _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEditarDoc">
+                    <p:dialog header="Editar el documento" widgetVar="EditarDoc" modal="true" height="220">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Nombre: " />
+                            <p:inputText value="#{editarRecursoBean.recurso.nombre}" />
+                            <p:outputLabel value="Autor: " />
+                            <p:inputText value="#{editarRecursoBean.recurso.autor}" /> 
+                            <p:outputLabel value="Enlace video: " />
+                            <p:inputText value="#{editarRecursoBean.recurso.pathPdf}" /> 
+                            <p:outputLabel value="Descripción: " />
+                            <p:inputTextarea value="#{editarRecursoBean.recurso.descripcion}" /> 
+                            <p:commandButton value="Cancelar" onclick="reload()"/>
+                            <p:commandButton action="#{editarRecursoBean.editarRecurso()}" value="Guardar"  onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Editar un Recurso  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar un Recurso _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminarDoc">
+                    <p:dialog header="Eliminar el Documento" widgetVar="EliminarDoc" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Está seguro de eliminar &nbsp; #{editarRecursoBean.recurso.nombre}" />
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton action="#{editarRecursoBean.eliminarRecurso()}" value="Aceptar" update=":dataTableDoc" onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar un Recurso  _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear un Documento _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrearDocumento">
+                    <p:dialog header="Nuevo Documento" widgetVar="CrearDocumento" modal="true" height="200">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombreDoc" value="Nombre:" />
+                            <p:inputText id="nombreDoc" value="#{recursosBean.recurso.nombre}" required="true" requiredMessage="Especifique un nombre al documento"/>
+                            <p:outputLabel for="autor" value="Autor:" />
+                            <p:inputText id="autor" value="#{recursosBean.recurso.autor}"/>
+                            <p:outputLabel for="descripcion" value="Descripcion:" />
+                            <p:inputText id="descripcion" value="#{recursosBean.recurso.descripcion}"/>
+                            <p:outputLabel for="enlace" value="Enlace:" />
+                            <p:inputText id="enlace" value="#{recursosBean.recurso.pathPdf}" required="true" requiredMessage="Especifique el enlacea del documento"/>
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update=":dataTableDoc msgs1" action="#{recursosBean.guardarRecurso()}" value="Guardar"/>
+                            <p:watermark for="enlace" value="http://es.scribd.com" id="watermark" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Documento _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear un Video _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrearVideo">
+                    <p:dialog header="Nuevo Video" widgetVar="CrearVideo" modal="true" height="200">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombreVideo" value="Nombre:" />
+                            <p:inputText id="nombreVideo"  value="#{recursosBean.recurso.nombre}" required="true" requiredMessage="Especifique un nombre al video"/>
+                            <p:outputLabel for="autor" value="Autor:" />
+                            <p:inputText id="autor" value="#{recursosBean.recurso.autor}"/>
+                            <p:outputLabel for="descripcion" value="Descripcion:" />
+                            <p:inputText id="descripcion" value="#{recursosBean.recurso.descripcion}"/>
+                            <p:outputLabel for="enlace" value="Enlace:" />
+                            <p:inputText id="enlace" value="#{recursosBean.recurso.pathVideo}" required="true" requiredMessage="Especifique el enlacea del video"/>
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update=":dataTableVid msgs1" action="#{recursosBean.guardarRecurso()}" value="Guardar"/>
+                            <p:watermark for="enlace" value="http://www.youtube.com/" id="watermark" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Video _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

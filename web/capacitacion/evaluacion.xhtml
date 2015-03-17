@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Evaluaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h3 class="titulos_tablas">Evaluaciones</h3>
+                    <br/>
+                    <h:form id="formEval">
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="eval"
+                                     value="#{evaluacionBean.listaEvaluaciones}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:25%" headerText="Tema">
+                                <h:outputText value="#{eval.tema}" />
+                            </p:column>
+
+                            <p:column style="width:10%" headerText="Fecha inicio">
+                                <h:outputText value="#{eval.fechaInicio}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column style="width:10%" headerText="Fecha Fin">
+                                <h:outputText value="#{eval.fechaFin}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column style="width:10%" headerText="Tiempo de duración">
+                                <h:outputText value="#{eval.tiempoDuracion}" >
+                                    <f:convertDateTime pattern="HH:mm" timeZone="GMT-5"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column style="width:10%" headerText="Calificación">
+                                <h:outputText value="#{eval.calificacion}" />
+                            </p:column>
+
+                            <p:column style="width:35%" headerText="Descripción">
+                                <h:outputText value="#{eval.descripcion}" />
+                            </p:column>
+
+                            <p:column style="width:20%"> 
+                                <h:form id="formAgregarPregunta"> 
+                                    <p:commandButton value="Agregar Preguntas" action="#{evaluacionBean.preguntaBean.obtenerEvaluacion(eval)}">
+                                    </p:commandButton>             
+                                </h:form>
+                            </p:column>
+
+                            <p:column style="width:7.5em"> 
+                                <p:commandButton id="modalVer" update=":formVer" icon="ui-icon-contact" oncomplete="PF('Ver').show();" title="Ver Datos">
+                                    <f:setPropertyActionListener value="#{eval}" target="#{evaluacionBean.evaluacion}">
+                                    </f:setPropertyActionListener>
+                                </p:commandButton>
+                                <p:commandButton id="selectEliminar" update=":formEliminar" 
+                                                 oncomplete="PF('Eliminar').show();" icon="ui-icon-trash" title="Eliminar" >
+                                    <f:setPropertyActionListener value="#{eval}" target="#{evaluacionBean.evaluacion}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable> 
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Evaluaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver una Evaluacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVer">
+                    <p:dialog header="Datos evaluación" widgetVar="Ver" modal="true">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Tema:"/>
+                            <p:outputLabel value="#{evaluacionBean.evaluacion.tema}"/>
+                            <p:outputLabel value="Fecha inicio:"/>
+                            <p:outputLabel value="#{evaluacionBean.evaluacion.fechaInicio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Fecha fin:"/>
+                            <p:outputLabel value="#{evaluacionBean.evaluacion.fechaFin}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Tiempo de duración:"/>
+                            <p:outputLabel value="#{evaluacionBean.evaluacion.tiempoDuracion}">
+                                <f:convertDateTime pattern="HH:mm" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Calificación:"/>
+                            <p:outputLabel value="#{evaluacionBean.evaluacion.calificacion}"/>
+                            <p:outputLabel value="Descripción: " />
+                            <p:outputLabel value="#{evaluacionBean.evaluacion.descripcion}" /> 
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver una Evaluacion  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar una Evaluacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminar">
+                    <p:dialog header="Eliminar evaluación" widgetVar="Eliminar" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <h:outputLabel class="txtLabel"  
+                                           value="¿Está seguro de eliminar la evaluación &nbsp; #{evaluacionBean.evaluacion.descripcion}?" />
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton action="#{evaluacionBean.eliminarEvaluacion()}" value="Aceptar"  onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar una Evaluacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

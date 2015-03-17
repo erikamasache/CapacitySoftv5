@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Capacitados _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <div class="contenedor">
+                    <h:form id="atras1" rendered="#{request.isUserInRole('Administrador')}">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="listaCapacitaciones?faces-redirect=true"/>
+                    </h:form>
+                    <h:form id="atras" rendered="#{request.isUserInRole('Capacitador')}">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="miCapacitacion?faces-redirect=true"/>
+                    </h:form>
+                    <h2 class="titulos_tablas">Capacitadores</h2> 
+
+                    <h:form id="formCapacitadorTable"> 
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="cap"
+                                     value="#{capacitadoresBean.listaCapacitadores}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:20%">
+                                <f:facet name="header">Nombres</f:facet>
+                                <h:outputText value="#{cap.nombre}" />
+                            </p:column>
+
+                            <p:column style="width:20%">
+                                <f:facet name="header">Apellidos</f:facet>
+                                <h:outputText value="#{cap.apellido}" />
+                            </p:column>
+
+                            <p:column style="width:10%">
+                                <f:facet name="header">Identificación</f:facet>
+                                <h:outputText value="#{cap.cedula}" />
+                            </p:column> 
+
+                            <p:column style="width:10%">
+                                <f:facet name="header">Cargo</f:facet>
+                                <h:outputText value="#{cap.cargo}" />                             
+                            </p:column>
+
+                            <p:column style="width:10%">
+                                <f:facet name="header">Celular</f:facet>
+                                <h:outputText value="#{cap.celular}" />                             
+                            </p:column>
+
+                            <p:column style="width:20%">
+                                <f:facet name="header">E-mail</f:facet>
+                                <h:outputText value="#{cap.correo}" />                             
+                            </p:column>
+
+                            <p:column style="width:7.5em"> 
+                                <p:commandButton id="modalVer" update=":formVer" icon="ui-icon-contact" oncomplete="PF('Ver').show();" 
+                                                 title="Ver Datos">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{capacitadorBean.capacitador}"/>
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable> 
+                    </h:form>
+
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver un Capacitador _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVer">
+                    <p:dialog header="Datos del capacitador" widgetVar="Ver" modal="true" height="480" width="350">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <p:outputLabel style="font-weight:bold;" value="Nombres:"/>
+                            <p:outputLabel value="#{capacitadorBean.capacitador.nombre}"/>
+                            <p:outputLabel style="font-weight:bold;" value="Apellidos:"/>
+                            <p:outputLabel value="#{capacitadorBean.capacitador.apellido}"/>
+                            <p:outputLabel style="font-weight:bold;" value="Identificación:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.cedula}"/>
+                            <p:outputLabel style="font-weight:bold;" value="Fecha de nacimiento:"/>
+                            <p:outputLabel value="#{capacitadorBean.capacitador.fechaNacimiento}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel style="font-weight:bold;" value="Dirección:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.direccion}"/>
+                            <p:outputLabel style="font-weight:bold;" value="Teléfono domiciliario:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.telefonoDomicilio}" />
+                            <p:outputLabel style="font-weight:bold;" value="Celular:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.celular}"/>
+                            <p:outputLabel style="font-weight:bold;" value="E-mail:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.correo}"/>
+                            <p:outputLabel style="font-weight:bold;" value="Cargo:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.cargo}"/>  
+                            <p:outputLabel style="font-weight:bold;" value="Fecha de ingreso:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.fechaIngreso}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel style="font-weight:bold;" value="Teléfono oficina:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.telefonoOficina}" />
+                            <p:outputLabel style="font-weight:bold;" value="Extensión oficina:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.extTelefonoOficina}" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver un Capacitador  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

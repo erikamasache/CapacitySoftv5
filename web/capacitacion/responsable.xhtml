@@ -1,0 +1,221 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:body>
+        
+        <ui:composition template="./../WEB-INF/base.xhtml">
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Responsables _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h:form id="atras">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="sector?faces-redirect=true"/>
+                    </h:form>
+                    <h3 class="titulos_tablas">Lista de Responsables</h3>
+                    <div class="botones">
+                        <h:form id="crear">
+                            <p:commandButton id="selectCrear" update=":formCrear" 
+                                             actionListener="#{responsableBean.instanciarResponsable()}"
+                                             oncomplete="PF('Crear').show();" value="Crear">
+                            </p:commandButton>
+                        </h:form>                                      
+                    </div>
+                    <p:dataTable widgetVar="capTable" id="dataTable" var="rp"
+                                 value="#{responsableBean.listaResponsables}" paginator="true"
+                                 rows="10"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                 {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                        <p:column style="width:20%" headerText="Nombres">
+                            <h:outputText value="#{rp.nombre}" />
+                        </p:column>
+
+                        <p:column style="width:20%" headerText="Apellidos">
+                            <h:outputText value="#{rp.apellido}" />
+                        </p:column>
+
+                        <p:column style="width:10%" headerText="Identificación">
+                            <h:outputText value="#{rp.cedula}" />
+                        </p:column>
+                        
+                        <p:column style="width:12%" headerText="Cargo">
+                            <h:outputText value="#{rp.cargo}" />
+                        </p:column>
+
+                        <p:column style="width:10%" headerText="Celular">
+                            <h:outputText value="#{rp.celular}" />
+                        </p:column>
+                        
+                        <p:column style="width:20%" headerText="E-mail">
+                            <h:outputText value="#{rp.correo}" />
+                        </p:column>
+                        
+                        <p:column style="width:7.5em"> 
+                            <h:form id="formVer">                    
+                                <p:commandButton id="modalVer" update=":formVer" icon="ui-icon-contact" oncomplete="PF('Ver').show();" 
+                                                 title="Ver Datos">
+                                    <f:setPropertyActionListener value="#{rp}" target="#{responsableBean.responsable}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="modalEditar" update=":formEditar" icon="ui-icon-pencil" oncomplete="PF('Editar').show();" 
+                                                 title="Editar Datos">
+                                    <f:setPropertyActionListener value="#{rp}" target="#{responsableBean.responsable}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="selectEliminar" update=":formEliminar" 
+                                                 oncomplete="PF('Eliminar').show();" icon="ui-icon-trash" title="Eliminar" >
+                                    <f:setPropertyActionListener value="#{rp}" target="#{responsableBean.responsable}"/>
+                                </p:commandButton>
+                            </h:form>
+                        </p:column>
+
+                    </p:dataTable> 
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Responsables  _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear un Responsable _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrear">
+                    <p:dialog header="Nuevo Responsable" widgetVar="Crear" modal="true" height="460">   
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombres" value="Nombres:"/>
+                            <p:inputText id="nombres"  value="#{responsableBean.responsable.nombre}" required="true" label="Nombres" 
+                                         requiredMessage="Especifique el nombre del responsable" onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="apellidos" value="Apellidos:"/>
+                            <p:inputText id="apellidos"  value="#{responsableBean.responsable.apellido}" required="true" label="Apellidos" 
+                                         requiredMessage="Especifique el apellido del responsable" onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="cedula" value="Tipo de identificación:" />
+                            <p:selectOneMenu value="#{responsableBean.responsable.tipoIdentificacion}" style="width:100%;">
+                                <f:selectItem itemLabel="Cédula" itemValue="1"/>
+                                <f:selectItem itemLabel="Pasaporte" itemValue="2"/>
+                            </p:selectOneMenu>
+                            <!--  -->
+                            <p:inputText id="cedula" value="#{responsableBean.responsable.cedula}" required="true"  
+                                         requiredMessage="Especifique la cédula del responsable" onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel for="direccion" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{responsableBean.responsable.direccion}" required="true"
+                                         requiredMessage="Especifique la dirección del responsable" onkeypress="return validarDireccion(event)"/>
+                            <p:outputLabel value="Teléfono domiciliario:" />
+                            <p:inputMask value="#{responsableBean.responsable.telefonoDomicilio}" mask="(099) 999-999" />
+                            <p:outputLabel for="celular" value="Celular:" />
+                            <p:inputMask id="celular" value="#{responsableBean.responsable.celular}" mask="0999-999-999" required="true" 
+                                         label="Celular" requiredMessage="Especifique el celular del responsable"/>
+                            <p:outputLabel for="correo" value="E-mail:" />
+                            <p:inputText id="correo" value="#{responsableBean.responsable.correo}" required="true" label="Correo" 
+                                         requiredMessage="Especifique el correo del responsable" onkeypress="return validarLetrasEmail(event)"/>
+                            <p:outputLabel for="cargo" value="Cargo:" />
+                            <p:inputText id="cargo" value="#{responsableBean.responsable.cargo}" required="true" label="Cargo" 
+                                         requiredMessage="Especifique el cargo del responsable" onkeypress="return validarLetras(event)"/>  
+                            <p:outputLabel for="telefonoOfinica" value="Teléfono oficina:" />
+                            <p:inputMask id="telefonoOfinica" value="#{responsableBean.responsable.telefonoOficina}" mask="(099) 999-999"  />
+                            <p:outputLabel value="Extensión oficina:" />
+                            <p:inputText value="#{responsableBean.responsable.extTelefonoOficina}" onkeydown="return validarNumeros(event)"/>
+
+                            <p:commandButton value="Cancelar"  onclick="reload()" />
+                            <p:commandButton update="msgs1 :dataTable" action="#{responsableBean.guardarResponsable()}" value="Guardar" />
+                            <p:watermark for="correo" value="ejemplo@mail.com" id="watermark" />
+
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Responsable _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver un Responsable _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVer">
+                    <p:dialog header="Datos del responsable" widgetVar="Ver" modal="true" height="360">
+                        <h:panelGrid class="panel" columns="2" >
+                            <h:outputLabel style="font-weight:bold;" value="Nombre: " />
+                            <h:outputText value="#{responsableBean.responsable.nombre}" />
+                            <h:outputLabel style="font-weight:bold;" value="Apellidos:"/>
+                            <h:outputText value="#{responsableBean.responsable.apellido}" /> 
+                            <h:outputLabel style="font-weight:bold;" value="Cédula:"/>
+                            <h:outputText value="#{responsableBean.responsable.cedula}" /> 
+                            <h:outputLabel style="font-weight:bold;" value="Dirección:"/>
+                            <h:outputText value="#{responsableBean.responsable.direccion}" /> 
+                            <h:outputLabel style="font-weight:bold;" value="Teléfono domicilio:"/>
+                            <h:outputText value="#{responsableBean.responsable.telefonoDomicilio}" />
+                            <h:outputLabel style="font-weight:bold;" value="Celular:"/>
+                            <h:outputText value="#{responsableBean.responsable.celular}" /> 
+                            <h:outputLabel style="font-weight:bold;" value="E-mail:"/>
+                            <h:outputText value="#{responsableBean.responsable.correo}" /> 
+                            <h:outputLabel style="font-weight:bold;" value="Cargo:"/>
+                            <h:outputText value="#{responsableBean.responsable.cargo}" /> 
+                            <h:outputLabel style="font-weight:bold;" value="Teléfono oficina:"/>
+                            <h:outputText value="#{responsableBean.responsable.telefonoOficina}" />
+                            <h:outputLabel style="font-weight:bold;" value="Extención oficina:"/>
+                            <h:outputText value="#{responsableBean.responsable.extTelefonoOficina}" /> 
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver un Responsable  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Editar un Responsable _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEditar">
+                    <p:dialog header="Editar el responsable" widgetVar="Editar" modal="true" height="460">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombres" value="Nombres:"/>
+                            <p:inputText id="nombres"  value="#{responsableBean.responsable.nombre}" required="true" 
+                                         requiredMessage="Especifique el nombre del responsable" onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="apellidos" value="Apellidos:"/>
+                            <p:inputText id="apellidos"  value="#{responsableBean.responsable.apellido}" required="true" 
+                                         requiredMessage="Especifique el apellido del responsable" onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="cedula" value="Tipo de identificación:" />
+                            <p:selectOneMenu value="#{responsableBean.responsable.tipoIdentificacion}" style="width:100%;">
+                                <f:selectItem itemLabel="Cédula" itemValue="1"/>
+                                <f:selectItem itemLabel="Pasaporte" itemValue="2"/>
+                            </p:selectOneMenu>
+                            <!--  -->
+                            <p:inputText id="cedula" value="#{responsableBean.responsable.cedula}" required="true" 
+                                         requiredMessage="Especifique la cédula del responsable" onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel for="direccion" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{responsableBean.responsable.direccion}" required="true" 
+                                         requiredMessage="Especifique la dirección del responsable" onkeypress="return validarDireccion(event)"/>
+                            <p:outputLabel value="Teléfono domiciliario:" />
+                            <p:inputMask value="#{responsableBean.responsable.telefonoDomicilio}" mask="(099) 999-999" />
+                            <p:outputLabel for="celular" value="Celular:" />
+                            <p:inputMask id="celular" value="#{responsableBean.responsable.celular}" mask="0999-999-999" 
+                                         required="true" label="Celular" requiredMessage="Especifique el celular del responsable"/>
+                            <p:outputLabel for="correo" value="E-mail:" />
+                            <p:inputText id="correo" value="#{responsableBean.responsable.correo}" required="true" 
+                                         requiredMessage="Especifique el correo del responsable" onkeypress="return validarLetrasEmail(event)"/>
+                            <p:outputLabel for="cargo" value="Cargo:" />
+                            <p:inputText id="cargo" value="#{responsableBean.responsable.cargo}" required="true" 
+                                         requiredMessage="Especifique el cargo del responsable" onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="telefonoOfinica" value="Teléfono oficina:" />
+                            <p:inputMask id="telefonoOfinica" value="#{responsableBean.responsable.telefonoOficina}" mask="(099) 999-999"  />
+                            <p:outputLabel value="Extensión oficina:" />
+                            <p:inputText value="#{responsableBean.responsable.extTelefonoOficina}" onkeydown="return validarNumeros(event)"/>
+
+                            <p:commandButton value="Cancelar" onclick="reload()" />
+                            <p:commandButton update="msgs1 :dataTable" action="#{responsableBean.editarResponsable()}" value="Editar" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Editar un Responsable  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar un Responsable _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminar">
+                    <p:dialog header="Eliminar Responsable" widgetVar="Eliminar" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="¿Está seguro de eliminar al responsable &nbsp; 
+                                           #{responsableBean.responsable.nombre}
+                                           ' '#{responsableBean.responsable.apellido}?" />
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton action="#{responsableBean.eliminarResponsable()}" value="Aceptar"  onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar un Responsable _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

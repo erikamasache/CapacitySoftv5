@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+            <ui:define name="content">
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Sectores _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h3 class="titulos_tablas">Lista de Sectores</h3>
+                    <div class="botones">
+                        <h:form>
+                            <h:commandLink action="#{sectorBean.exportarPDF(actionEvent)}" >
+                                <p:graphicImage value="/resources/images/pdf.jpg" width="24" height="30"/>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                    <div class="botones">
+                        <h:form id="crear">
+                            <p:commandButton id="selectCrear" update=":formCrear" 
+                                             oncomplete="PF('Crear').show();" value="Crear" style="height: 30px">
+                            </p:commandButton>
+                        </h:form> 
+
+                    </div>
+                    <h:form id="formTable">
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="sec"
+                                     value="#{sectorBean.listaSectores}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true"
+                                     filteredValue="#{sectorBean.filterSectores}">
+
+                            <!--<f:facet name="header" > Lista de sectores</f:facet>-->
+
+                            <p:column style="width:70%" headerText="Nombres" filterBy="#{sec.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{sec.nombre}" />
+                            </p:column>  
+
+                            <p:column style="width:11%"> 
+                                <p:commandButton value="Responsables" action="#{sectorBean.responsableBean.obtenerSector(sec)}">
+                                </p:commandButton>             
+                            </p:column>
+
+                            <p:column style="width:8%"> 
+                                <p:commandButton value="Carreras" action="#{sectorBean.carreraBean.obtenerSector(sec)}">
+                                </p:commandButton>             
+                            </p:column>
+
+                            <p:column style="width:8%" exportable="false"> 
+                                <p:commandButton id="modalEditar" update=":formEditar" icon="ui-icon-pencil" oncomplete="PF('Editar').show();" title="Editar Datos">
+                                    <f:setPropertyActionListener value="#{sec}" target="#{sectorBean.sector}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="selectEliminar" update=":formEliminar" 
+                                                 oncomplete="PF('Eliminar').show();" icon="ui-icon-trash" title="Eliminar" >
+                                    <f:setPropertyActionListener value="#{sec}" target="#{sectorBean.sector}"/>
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable> 
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Sectores _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear un Sector _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrear">
+                    <p:dialog header="Nuevo Sector" widgetVar="Crear" modal="true" height="70">   
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombres" value="Nombre:"/>
+                            <p:inputText id="nombres" value="#{sectorBean.sector.nombre}" required="true" requiredMessage="Especifique el nombre del sector" onkeypress="return validarLetras(event)"/> 
+                            <p:commandButton value="Limpiar" type="reset" />
+                            <p:commandButton update="msgs1 :formTable" action="#{sectorBean.guardarSector()}" value="Aceptar"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Sector _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Editar un Sector _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEditar">
+                    <p:dialog header="Editar Sector" widgetVar="Editar" modal="true" height="70">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombre" value="Nombre: " />
+                            <p:inputText id="nombre" value="#{sectorBean.sector.nombre}" required="true" requiredMessage="Especifique el nombre del sector" onkeypress="return validarLetras(event)"/>                             
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton update="msgs1 :formTable" action="#{sectorBean.editarSector()}" value="Editar" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Editar un Sector  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar un Sector _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminar">
+                    <p:dialog header="Modal Dialog" widgetVar="Eliminar" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="¿Está seguro de eliminar el sector &nbsp; #{sectorBean.sector.nombre}?" />
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton action="#{sectorBean.editarSector()}" value="Aceptar"  onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar un Sector _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO informe _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <h:form id="formInforme" >
+                    <p:dataTable rendered="false" widgetVar="userTable"
+                                 id="dataTable2" var="sec"
+                                 value="#{sectorBean.listaSectores}">
+                        <p:column headerText="Nombres">
+                            <f:facet name="header">Nombres</f:facet>
+                            <h:outputText value="#{sec.nombre}" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN informe _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

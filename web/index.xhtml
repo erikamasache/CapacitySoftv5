@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:body>
+
+        <ui:composition template="./WEB-INF/baseLogin.xhtml">
+
+            <ui:define name="content">
+                <div id="div">
+                    <section>
+                        <h:form>
+                            <h:panelGrid class="panel" columns="3" >
+                                <p:inputText id="username" value="#{loginBean.correo}" placeholder="Usuario"/>
+                                <p:password id="password" value="#{loginBean.contasenia}" placeholder="Contraseña"/>
+                                <p:commandButton value="Entrar" action="#{loginBean.login()}"/>
+                                <br/>
+                                <p:commandLink id="olvido" update=":formOlvido" oncomplete="PF('Olvido').show();"
+                                               style="color: #ffffff; line-height: 3;" >Olvido su contraseña</p:commandLink>
+                                <p:commandLink id="registrarme" update=":formRegistrar" oncomplete="PF('Registrar').show();"
+                                               style="color: #ffffff" >Registrarme
+                                </p:commandLink>
+                            </h:panelGrid>
+                        </h:form>
+                    </section>
+                </div>
+
+                <h:form id="formRegistrar">
+                    <p:dialog header="Registrarme" widgetVar="Registrar" modal="true" height="580">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="clave" value="Clave de acceso a capacitacion: " style="line-height: 15px" />
+                            <p:password id="clave" value="#{registrarseBean.clave}" />  
+                            <p:outputLabel for="nombres" styleClass="espacios" value="Nombres:" />
+                            <p:inputText id="nombres"  value="#{registrarseBean.capacitado.nombre}" required="true" 
+                                         label="Nombres" requiredMessage="Especifique el nombre del capacitado" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="apellidos" styleClass="espacios" value="Apellidos:"/>
+                            <p:inputText id="apellidos"  value="#{registrarseBean.capacitado.apellido}" required="true" 
+                                         label="Apellidos" requiredMessage="Especifique el apellido del capacitado" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="cedula" styleClass="espacios" value="Tipo de identificación:" />
+                            <p:selectOneMenu value="#{registrarseBean.capacitado.tipoIdentificacion}" style="width:100%;">
+                                <f:selectItem itemLabel="Cédula" itemValue="1"/>
+                                <f:selectItem itemLabel="Pasaporte" itemValue="2"/>
+                            </p:selectOneMenu>
+                            <!--  -->
+                            <p:inputText id="cedula" value="#{registrarseBean.capacitado.cedula}" required="true" 
+                                         label="Cedula" requiredMessage="Especifique la cédula del capacitado"
+                                         onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel styleClass="espacios" value="Historia clínica:" />
+                            <p:inputText  value="#{registrarseBean.capacitado.numHistoriaClinica}" 
+                                          onkeypress="return validarHistoriaClinica(event)" />
+                            <p:outputLabel for="direccion" styleClass="espacios" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{registrarseBean.capacitado.direccion}" required="true" 
+                                         label="Direccion" requiredMessage="Especifique la dirección del capacitado"
+                                         onkeypress="return validarDireccion(event)"/>
+                            <p:outputLabel styleClass="espacios" value="Teléfono domiciliario:" />
+                            <p:inputMask value="#{registrarseBean.capacitado.telefonoDomicilio}" mask="(099) 999-999" />
+                            <p:outputLabel for="celular" styleClass="espacios" value="Celular:" />
+                            <p:inputMask id="celular" value="#{registrarseBean.capacitado.celular}" mask="0999-999-999" 
+                                         required="true" label="Celular" 
+                                         requiredMessage="Especifique el celular del capacitado"/>
+                            <p:outputLabel for="correo" styleClass="espacios" value="E-mail:" />
+                            <p:inputText id="correo" value="#{registrarseBean.capacitado.correo}" required="true" 
+                                         label="Correo" requiredMessage="Especifique el correo del capacitado" 
+                                         onchange="validarEmail(this)" onkeypress="return validarEC(event)"/>
+                            <h:outputLabel for="pwd1" styleClass="espacios" value="Contraseña: *" />
+                            <p:password id="pwd1" value="#{registrarseBean.capacitado.contrasenia}" match="pwd2" required="true" 
+                                        requiredMessage="Especifique la contraseña" feedback="true" validatorMessage="Las contraseñas no coinciden"
+                                        onkeypress="return validarEC(event)"/>
+
+                            <h:outputLabel for="pwd2" styleClass="espacios" value="Repita Contraseña: *" />
+                            <p:password id="pwd2" value="#{registrarseBean.capacitado.contrasenia}" required="true" 
+                                        requiredMessage="Especifique la contraseña" feedback="true"
+                                        onkeypress="return validarEC(event)"/>
+                            <p:outputLabel for="cargo" styleClass="espacios" value="Cargo:" />
+                            <p:inputText id="cargo" value="#{registrarseBean.capacitado.cargo}" required="true" 
+                                         label="Cargo" requiredMessage="Especifique el cargo del capacitado" 
+                                         onkeypress="return validarLetras(event)"/>  
+                            <p:outputLabel for="sector" styleClass="espacios" value="Sector:"/>
+                            <p:selectOneMenu converter="sectorConverter" id="sector" value="#{registrarseBean.capacitado.sectorId}" 
+                                             style="width:100%;" required="true" label="Sector" 
+                                             requiredMessage="Especifique el sector al que pertenece el capacitado">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItems value="#{sectorBean.listaSectores}" var="sector" 
+                                               itemLabel="#{sector.nombre}" itemValue="#{sector}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="tipo" styleClass="espacios" value="Tipo:"/>
+                            <p:selectOneMenu converter="tipoConverter" id="tipo" value="#{registrarseBean.capacitado.tipoCapacitadoid}" 
+                                             style="width:100%;" required="true" label="Tipo" 
+                                             requiredMessage="Especifique el tipo al que pertenece el capacitado">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItems value="#{tipoCapacitadoBean.listaTipoCapacitados}" var="tipo" 
+                                               itemLabel="#{tipo.nombre}" itemValue="#{tipo}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="telefonoOfinica" styleClass="espacios" value="Teléfono oficina:" />
+                            <p:inputMask id="telefonoOfinica" value="#{registrarseBean.capacitado.telefonoOficina}" mask="(099) 999-999"  />
+                            <p:outputLabel styleClass="espacios" value="Extensión oficina:" />
+                            <p:inputText value="#{registrarseBean.capacitado.extTelefonoOficina}" onkeydown="return validarNumeros(event)"/>
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1 :formRegistrar" action="#{registrarseBean.guardarCapacitado()}" value="Guardar"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal  _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formOlvido">
+                    <p:dialog header="Recuperar contraseña" widgetVar="Olvido" modal="true" height="120" width="490"> 
+                        <p:growl id="msgs1"/>
+                        <p:outputLabel value="Para restablecer la contraseña, introduce la dirección de correo electrónico que 
+                                       utilizas para ingresar al sistema. " style="font-size: 95%" />
+                        <br/>
+                        <h:panelGrid class="panel" columns="2" style="margin-left: 50px; ">
+                            <p:outputLabel value="Ingrese correo electrónico: " style="line-height: 3;"/>
+                            <p:inputText value="#{recuperarContraseniaBean.correo}" style="margin-left: 20px;"/>  
+                        </h:panelGrid>
+                        <h:panelGrid class="panel" columns="2" style="margin-left: 50px;">
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1 :formOlvido" action="#{recuperarContraseniaBean.recuperarContrasenia()}" value="Enviar"
+                                             style="margin-left: 200px;"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal  _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                
+                
+            </ui:define>
+        </ui:composition>
+
+    </h:body>
+</html>

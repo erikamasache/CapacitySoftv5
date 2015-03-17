@@ -1,0 +1,115 @@
+.calendario {
+    width: 1300px;
+}
+
+#pie_index {
+    position: fixed;
+    clear: both;
+    line-height: 24px;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    height: 50px;
+    bottom: 0px;
+}
+
+/* -*-*-*-*-*-*-*-*-*-*-*-* clase jumbotron -*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.jumbotron {
+    padding: 0px;
+    margin: 0px;
+    line-height: 2.1428571435;
+    color: inherit;
+    background-color: #eee;
+}
+
+.container .jumbotron {
+    border-radius: 6px;
+}
+
+/* -*-*-*-*-*-*-*-*-*-*-*-* fin clase jumbotron -*-*-*-*-*-*-*-*-*-*-*-* */
+
+.contenedor{
+    margin-left: 7%;
+    margin-right: 7%;
+}
+
+.contenedorPeque{
+    margin-left: 37%;
+    margin-right: 37%;
+}
+
+.contenedorImprimirCapacitaciones{
+    margin-left: 49%;
+    margin-right: 7%;
+}
+
+.botones{
+    float: right;
+    margin-right: 5px; 
+    margin-top: 5px;
+}
+
+.botonFecha{
+    margin-top: 0.5%;
+    margin-left: 7%;
+    float: left;
+    height: 80%;
+}
+
+/* -*-*-*-*-*-*-*-*-*-*-*-* titulos de tablas -*-*-*-*-*-*-*-*-*-*-*-* */
+.titulos_tablas{
+    text-align: center;
+}
+
+/* -*-*-*-*-*-*-*-*-*-*-*-* listas -*-*-*-*-*-*-*-*-*-*-*-* */
+ul { 
+    list-style-type: none; 
+}
+
+#separador{
+    line-height: 0;
+}
+
+.ui-picklist
+.ui-picklist-list {
+width: 350px !important;
+}
+
+.ui-picklist
+.ui-picklist-filter{
+    width: 93% !important;
+}
+
+
+
+/*primefaces */
+.feriado .fc-event-inner{
+    background-color: palevioletred !important;
+    border-radius: 4px !important;
+}
+
+.capacitacion .fc-event-inner{
+    background-color: steelblue !important;
+    border-radius: 4px !important;
+}            
+.fc-event{
+    border:0px !important;
+    border-radius: 15px !important;
+}
+
+/* exportar capacitacion*/
+.exportCap{
+    float: right; 
+    margin-right: 15px; 
+    margin-top: 15px;
+}
+
+/* interlineado registrar
+*/
+
+.espacios{
+    line-height: 30px
+}

@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h2 class="titulos_tablas">Capacitaciones pendietes</h2> 
+                    <h:form id="formCapacitacion">
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="cap"
+                                     value="#{capacitacionCapacitadoBean.listaCapacitacionesPenientes}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+                            <p:growl id="msgs1"/>
+                            <p:column style="width:30%" headerText="Nombres">
+                                <h:outputText value="#{cap.tema}" />
+                            </p:column>
+
+                            <p:column style="width:15%" headerText="Lugar">
+                                <h:outputText value="#{cap.lugar}" />                             
+                            </p:column>
+
+                            <p:column style="width:8%" headerText="Fecha inicio">
+                                <h:outputText value="#{cap.fechaInicio}"  >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column style="width:8%" headerText="Fecha fin">
+                                <h:outputText value="#{cap.fechaFin}"  >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>   
+
+                            <p:column style="width:23em"> 
+                                <p:growl id="msgs2"/>
+                                <p:commandButton id="modalVer" update=":formVer" icon="ui-icon-contact" oncomplete="PF('Ver').show();" 
+                                                 title="Ver Datos">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{capacitacionCapacitadoBean.capacitacion}"/>
+                                </p:commandButton>
+                                <p:commandButton value="evaluacion"></p:commandButton>
+                                <p:commandButton value="recursos" action="#{recursoBean.obtenerCapacitacion(cap)}"></p:commandButton>
+                                <p:commandButton id="selectCapacitadores" value="Capacitadores" title="Capacitadores" action="#{capacitadoresBean.obtenerCapacitacion(cap)}"/>
+                                <p:commandButton rendered="#{capacitacionCapacitadoBean.textoRegistrarse(cap)}" update="msgs2 :formCapacitacion" value="registrarse" action="#{capacitacionCapacitadoBean.registrarse()}">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{capacitacionCapacitadoBean.capacitacion}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable> 
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver un Capacitado _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVer">
+                    <p:dialog header="Datos de la capacitacion" widgetVar="Ver" modal="true" height="460" width="350">
+                        <h:panelGrid class="panel" columns="2" >
+                            <h:outputLabel style="font-weight:bold;" value="Tema: " />
+                            <h:outputText value="#{capacitacionCapacitadoBean.capacitacion.tema}" /> 
+                            <h:outputLabel style="font-weight:bold;" value="Lugar:"  />
+                            <h:outputText value="#{capacitacionCapacitadoBean.capacitacion.lugar}" />
+                            <h:outputLabel style="font-weight:bold;" value="Fecha inicio:"  />
+                            <h:outputText value="#{capacitacionCapacitadoBean.capacitacion.fechaInicio}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-5"/>
+                            </h:outputText>
+                            <h:outputLabel style="font-weight:bold;" value="Fecha fin:"  />
+                            <h:outputText value="#{capacitacionCapacitadoBean.capacitacion.fechaFin}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-5"/>
+                            </h:outputText>
+                            <h:outputLabel style="font-weight:bold;" value="Hora inicio:"  />
+                            <h:outputText value="#{capacitacionCapacitadoBean.capacitacion.horaInicio}" >
+                                <f:convertDateTime pattern="HH:mm" timeZone="GMT-5"/>
+                            </h:outputText>
+                            <h:outputLabel style="font-weight:bold;" value="Hora fin:"  />
+                            <h:outputText value="#{capacitacionCapacitadoBean.capacitacion.horaFin}" >
+                                <f:convertDateTime pattern="HH:mm" timeZone="GMT-5"/>
+                            </h:outputText>
+                            <h:outputLabel style="font-weight:bold;" value="Observaciones:"  />
+                            <h:outputLabel value="#{capacitacionCapacitadoBean.capacitacion.observaciones}" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver un Capacitado  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h2 class="titulos_tablas">Capacitaciones pasadas</h2> 
+                    <h:form id="formCapacitacionesP">
+                        <p:dataTable widgetVar="capTable" id="dataTable2" var="cap"
+                                     value="#{capacitacionCapacitadoBean.listaCapacitacionesPasadas}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:30%">
+                                <f:facet name="header">Nombres</f:facet>
+                                <h:outputText value="#{cap.tema}" />
+                            </p:column>
+
+                            <p:column style="width:15%">
+                                <f:facet name="header">Lugar</f:facet>
+                                <h:outputText value="#{cap.lugar}" />                             
+                            </p:column>
+
+                            <p:column style="width:8%">
+                                <f:facet name="header">Fecha inicio</f:facet>
+                                <h:outputText value="#{cap.fechaInicio}"  >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column style="width:8%">
+                                <f:facet name="header">Fecha fin</f:facet>
+                                <h:outputText value="#{cap.fechaFin}"  >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column> 
+
+                            <p:column style="width:8%">
+                                <f:facet name="header">Horario</f:facet>
+                                <h:outputText value="#{cap.horaInicio}" >
+                                    <f:convertDateTime pattern="HH:mm" timeZone="GMT-5"/>
+                                </h:outputText>
+                                <p:outputLabel value=" - "/>
+                                <h:outputText value="#{cap.horaFin}" >
+                                    <f:convertDateTime pattern="HH:mm" timeZone="GMT-5"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column style="width:15em"> 
+                                <h:form id="formVerCap">                    
+                                    <p:commandButton id="modalVer" update=":formVer" icon="ui-icon-contact" oncomplete="PF('Ver').show();" 
+                                                     title="Ver Datos">
+                                        <f:setPropertyActionListener value="#{cap}" target="#{capacitacionCapacitadoBean.capacitacion}"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="evaluacion" ></p:commandButton>
+                                    <p:commandButton value="recursos" action="#{capacitacionCapacitadoBean.obtenerCapacitacion(cap)}"></p:commandButton>
+                                    <p:commandButton id="selectCapacitadores" value="Capacitadores" title="Capacitadores" action="#{capacitadoresBean.obtenerCapacitacion(cap)}"/>
+                                </h:form>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

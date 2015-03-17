@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <h:form id="paginaInicial">
+                    <p:graphicImage name="images/induccion.JPG"/>
+                    <p:growl id="msgs1"/>
+                    <p:accordionPanel>
+                        <p:tab title="Quienes Somos">
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText
+                                    value="The story begins as Don Vito Corleone..." />
+                            </h:panelGrid>
+                        </p:tab>
+                        <p:tab title="Servicios médico ocupacional">
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Francis Ford Coppola's legendary..." />
+                            </h:panelGrid>
+                        </p:tab>
+                        <p:tab title="Seguridad e higiene">
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="After a break of more than 15 years..." />
+                            </h:panelGrid>
+                        </p:tab>
+                        <p:tab title="POLÍTICA INSTITUCIONAL DE SEGURIDAD, HIGIENE Y SALUD">
+                            <h:outputText value="Art. 1. La Universidad Nacional de Loja es una institución pública de educación superior; desarrolla actividades de docencia, investigación, y vinculación con la sociedad; es respetuosa de la ley; garantiza a su personal el derecho a un trabajo digno, seguro y en ambientes adecuados, acordes al desempeño de sus funciones y actividades cotidianas, para mantener su salud física, psíquica y mental." />
+                            <br/> <br/>                           
+                            <h:outputText value="Art. 2. La Universidad Nacional de Loja implementará un sistema de gestión de seguridad, higiene y salud en el trabajo; asignando para ello los recursos humanos, económicos y físicos que sean necesarios, a fin de garantizar su adecuado funcionamiento." />
+                            <br/>  <br/>                          
+                            <h:outputText value="Art. 3. La Universidad Nacional de Loja desarrollará permanentemente planes y programas de prevención, que permitan identificar y controlar los diferentes factores de riesgo, para minimizar la ocurrencia de incidentes, accidentes y enfermedades profesionales." />
+                            <br/>  <br/>                          
+                            <h:outputText value="Art. 4. La Universidad Nacional de Loja cumplirá la normativa legal que en materia de seguridad, higiene y salud en el trabajo a fin de garantizar una mejora continua  del programa de prevención de riesgos laborales." />
+                            <br/>  <br/>                          
+                            <h:outputText value="Art. 5. La Universidad Nacional de Loja revisará en forma periódica el sistema de gestión de seguridad, higiene y salud en el trabajo, a fin de garantizar una mejora continua del programa de prevención de riesgos laborales." />
+                            <br/>  <br/>                          
+                            <h:outputText value="Art. 6. La presente política se integrará como parte del reglamento de seguridad, higiene y Salud del Trabajo de la Universidad Nacional de Loja." />
+                        </p:tab>
+                        <p:tab title="Cursos">
+                            <p:accordionPanel>
+                                <p:tab title="Inducción">
+                                    <h:panelGrid columns="2" cellpadding="10">
+                                        <h:outputText
+                                            value="The story begins as Don Vito Corleone..." />
+                                    </h:panelGrid>
+                                </p:tab>
+                                <p:tab title="Factores de Riesgo">
+                                    <h:panelGrid columns="2" cellpadding="10">
+                                        <h:outputText value="Francis Ford Coppola's legendary..." />
+                                    </h:panelGrid>
+                                </p:tab>
+                                <p:tab title="Seguridad en Laboratorios">
+                                    <h:panelGrid columns="2" cellpadding="10">
+                                        <h:outputText value="After a break of more than 15 years..." />
+                                    </h:panelGrid>
+                                </p:tab>
+                                <p:tab title="Orden y Limpieza">
+
+                                </p:tab>
+                            </p:accordionPanel>
+                        </p:tab>
+                    </p:accordionPanel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

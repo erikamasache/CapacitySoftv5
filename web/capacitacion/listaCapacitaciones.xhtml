@@ -1,0 +1,400 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h2 class="titulos_tablas">Capacitaciones</h2> 
+                    <div class="botones">
+                        <h:form id="nuevoPDF">
+                            <h:commandLink action="#{imprimirBean.exportarPDF(actionEvent)}" >
+                                <p:graphicImage value="/resources/images/pdf.jpg" width="24" height="30"/>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                    <p:dataTable widgetVar="capTable" id="dataTable" var="cap"
+                                 value="#{calendarioBean.listaCapacitaciones}" paginator="true"
+                                 rows="10"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                 {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15" editable="true" rendered="true" >
+
+                        <p:column style="width:28%">
+                            <f:facet name="header">Tema</f:facet>
+                            <h:outputText value="#{cap.tema}" />
+                        </p:column>
+
+                        <!-- lista de iconos  jqueryui.com/themeroller/
+                       http://www.petefreitag.com/cheatsheets/jqueryui-icons/
+                       http://jquery-ui.googlecode.com/svn/tags/1.6rc5/tests/static/icons.html -->   
+                        <p:column style="width:33em"> 
+                            <h:form id="formCapacitados">                    
+                                <p:commandButton id="selectCapacitado" value="Capacitados" title="Capacitados" action="#{capacitadosBean.obtenerCapacitacion(cap)}"/>
+
+                                <p:commandButton id="selectRegistrado" value="Capacitados Registrados" title="Capacitados Registrados" action="#{registradosBean.obtenerCapacitacion(cap)}"/>
+
+                                <p:commandButton id="selectCapacitadores" value="Capacitadores" title="Capacitadores" action="#{capacitadoresBean.obtenerCapacitacion(cap)}"/>
+
+                                <p:commandButton id="selectEvaluacion" value="Evaluacion" title="Evaluacion" update=":formCrearEval" 
+                                                 oncomplete="PF('CrearEvaluacion').show();" action="#{evaluacionCapacitacionBean.obtenerEvaluacion()}">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{evaluacionCapacitacionBean.capacitacion}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="selectRecursos" value="Recursos" title="Recursos" action="#{recursosBean.obtenerCapacitacion(cap)}">
+                                </p:commandButton>
+                            </h:form>
+                        </p:column>
+                        <p:column style="width:5.7em"> 
+                            <h:form id="formCap">                    
+                                <p:commandButton id="modalVerCap" update=":formCrearCap" icon="ui-icon-contact"  
+                                                 title="Ver Datos" oncomplete="PF('CrearCap').show();">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{capacitacionBean.calendarioBean.capacitacion}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="modalEditar" icon="ui-icon-pencil" update=":formCrearCapacitacion"
+                                                 title="Editar Capacitacion" oncomplete="PF('CrearCapacitacion').show();">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{capacitacionBean.calendarioBean.capacitacion}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="selectEliminar"  icon="ui-icon-trash" title="Eliminar" update=":formEliminar"
+                                                 oncomplete="PF('Eliminar').show();">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{capacitacionBean.calendarioBean.capacitacion}"/>
+                                </p:commandButton>
+                            </h:form>
+                        </p:column>
+                    </p:dataTable> 
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Crear una Capacitacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <h:form id="formCrearCapacitacion">
+                    <p:dialog header="Capacitacion" widgetVar="CrearCapacitacion" modal="true"> 
+                        <p:growl id="msgs1"/>
+                        <h:commandLink action="#{sectorBean.exportarPDF(actionEvent)}" style="float: right; margin-right: 15px; margin-top: 15px;">
+                            <p:graphicImage value="/resources/images/pdf.jpg" width="20" />
+                        </h:commandLink>
+                        <p:commandLink id="selectEliminar" update=":formEliminar"  oncomplete="PF('Eliminar').show();"
+                                       title="Eliminar" style="float: right;margin-right: 15px; margin-top: 15px;" >
+                            <p:graphicImage value="/resources/images/tacho.png" width="20" height="30" />
+                        </p:commandLink>
+                        <p:wizard id="detallesEvento" backLabel="Atrás" nextLabel="Siguiente" showStepStatus="false" >
+                            <p:growl id="msgs2"/>
+                            <p:tab id="tabDatos" title="Datos">
+                                <p:panel header="Datos de la Capacitación">
+                                    <h:panelGrid id="panelDatos" columns="4" style="width: 600px">
+                                        <p:outputLabel for="tema" value="Tema:" />
+                                        <p:inputText id="tema" value="#{capacitacionBean.calendarioBean.capacitacion.tema}" 
+                                                     required="true" requiredMessage="Especifique un tema a la capacitación"
+                                                     onkeypress="return validarDireccion(event)"/>
+                                        <p:outputLabel for="lugar" value="Lugar:" />
+                                        <p:inputText id="lugar" value="#{capacitacionBean.calendarioBean.capacitacion.lugar}" 
+                                                     required="true" requiredMessage="Especifique el lugar de capacitación"/>
+                                        <p:outputLabel for="fechaInicio" value="Fecha de inicio:" />
+                                        <p:calendar id="fechaInicio" value="#{capacitacionBean.calendarioBean.capacitacion.fechaInicio}"  
+                                                    maxdate="#{calendarioBean.maxFechaCap}" pattern="dd-MM-yyyy" required="true" 
+                                                    requiredMessage="Especifique la fecha de inicio de la capacitación" locale="es">
+                                            <p:ajax event="dateSelect" listener="#{capacitacionBean.calendarioBean.obtenerMinFechaCap}" update="fechaFin" />
+                                        </p:calendar>                                                
+                                        <p:outputLabel for="fechaFin" value="Fecha de fin:" />
+                                        <p:calendar id="fechaFin" value="#{capacitacionBean.calendarioBean.capacitacion.fechaFin}"  
+                                                    mindate="#{capacitacionBean.calendarioBean.minFechaCap}" pattern="dd-MM-yyyy" required="true" 
+                                                    requiredMessage="Especifique la fecha de finalización de la capacitación" locale="es">
+                                            <p:ajax event="dateSelect" listener="#{capacitacionBean.calendarioBean.obtenerMaxFechaCap}" update="fechaInicio" />
+                                        </p:calendar>
+                                        <p:outputLabel for="horaInicio" value="Hora inicio:" />
+                                        <p:calendar id="horaInicio" value="#{capacitacionBean.calendarioBean.capacitacion.horaInicio}" 
+                                                    minHour="07" maxHour="#{capacitacionBean.calendarioBean.horaFin}"
+                                                    pattern="HH:mm" timeOnly="true" timeZone="GMT-5" required="true" 
+                                                    requiredMessage="Especifique la hora de inicio de la capacitación">
+                                            <p:ajax event="dateSelect" listener="#{capacitacionBean.calendarioBean.obtenerHoraInicio}" update="horaFin" />
+                                        </p:calendar>
+                                        <p:outputLabel for="horaFin" value="Hora fin:" />
+                                        <p:calendar id="horaFin" value="#{capacitacionBean.calendarioBean.capacitacion.horaFin}" 
+                                                    minHour="#{capacitacionBean.calendarioBean.horaInicio}" maxHour="19"
+                                                    pattern="HH:mm" timeOnly="true" timeZone="GMT-5" required="true" 
+                                                    requiredMessage="Especifique la hora de finalización de la capacitación" >
+                                            <p:ajax event="dateSelect" listener="#{capacitacionBean.calendarioBean.obtenerHoraFin}" update="horaInicio" />
+                                        </p:calendar>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="5">
+                                        <p:outputLabel value="Estado: " />
+                                        <p:selectBooleanCheckbox value="#{capacitacionBean.calendarioBean.capacitacion.activo}" />
+                                        <p:outputLabel value="Observaciones"/>
+                                        <p:inputTextarea value="#{capacitacionBean.calendarioBean.capacitacion.observaciones}" maxlength="250" autoResize="false" style="width: 360px; height: 100px"/>                                            
+
+                                    </h:panelGrid>
+                                </p:panel>                                    
+                            </p:tab>
+                            <p:tab id="tabCapacitador" title="Capacitador">
+
+                                <p:panel header="Asignar Capacitador(es)" >
+                                    <p:panelGrid id="panelCap" columns="1"  style="width: 600px;">
+                                        <p:pickList  id="picklistCap" value="#{capacitacionBean.calendarioBean.listDobleCapacitadores}" var="capacitador"
+                                                     itemLabel="#{capacitador.nombre} #{capacitador.apellido}" itemValue="#{capacitador}" 
+                                                     converter="pickListCapacitadorConverter" showSourceFilter="true" showTargetFilter="true" 
+                                                     addAllLabel="Añadir todos" addLabel="Añadir" removeAllLabel="Quitar todos" removeLabel="Quitar" >
+                                            <f:facet name="sourceCaption" >Lista Capacitador(es)</f:facet>
+                                            <f:facet name="targetCaption" >Capacitador(es) Seleccionado(s)</f:facet>
+                                        </p:pickList>
+                                    </p:panelGrid>
+                                </p:panel>
+                            </p:tab>
+                            <p:tab id="tabUsuarios" title="Usuarios">
+                                <p:panel header="Asignar Usuarios">
+                                    <h:panelGrid id="panelUsuarios" columns="5" style="width: 600px;">
+                                        <p:outputLabel value="Sector:" />
+                                        <p:selectOneMenu id="sector" style="width: 100px" value="#{capacitacionBean.calendarioBean.capacitacion.sectorId}"
+                                                         converter="sectorConverter">
+                                            <f:selectItem itemLabel="" itemValue="#{null}" />
+                                            <f:selectItems value="#{sectorBean.listaSectores}" var="sect" 
+                                                           itemLabel="#{sect.nombre}" itemValue="#{sect}">
+                                            </f:selectItems>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Tipo:" />
+                                        <p:selectOneMenu id="tipo" style="width: 100px" value="#{capacitacionBean.calendarioBean.tipoCapacitado}" 
+                                                         converter="tipoConverter">
+                                            <f:selectItem itemLabel="" itemValue="#{null}" />
+                                            <f:selectItems value="#{calendarioBean.listTipoCapacitado}" var="tipo"
+                                                           itemLabel="#{tipo.nombre}" itemValue="#{tipo}"/>
+                                        </p:selectOneMenu>
+                                        <p:commandButton action="#{calendarioBean.cargarCapacitados()}" 
+                                                         update="picklist" value="Cargar Usuarios"/>  
+                                    </h:panelGrid>
+                                    <p:panelGrid columns="1"  style="width: 600px;">
+
+                                        <p:pickList id="picklist"  value="#{capacitacionBean.calendarioBean.listDobleCapacitados}" var="capacitado"
+                                                    itemLabel="#{capacitado.nombre} #{capacitado.apellido}" itemValue="#{capacitado}" 
+                                                    converter="primeFacesPickListConverter" showSourceFilter="true" showTargetFilter="true">
+                                            <f:facet name="sourceCaption">Lista Usuarios</f:facet>
+                                            <f:facet name="targetCaption">Usuarios Seleccionados</f:facet>
+                                        </p:pickList>
+                                    </p:panelGrid>
+                                </p:panel>
+                            </p:tab>
+                            <p:tab id="tabEvaluacion" title="Evaluación">
+                                <p:panel header="Asignar Evaluación" >
+                                    <h:panelGrid columns="2"  style="width: 600px;">
+                                        <p:outputLabel value="Evaluación:" />
+                                        <p:commandButton id="selectEvaluacion" update=":formCrearEvalCap" 
+                                                         oncomplete="PF('CrearEvaluacionCap').show();" value="Asignar" action="#{calendarioBean.obtenerEvaluacion()}"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                                <p:panel header="Asignar Recursos" >
+                                    <h:panelGrid columns="2" style="width: 600px;" >
+                                        <p:commandButton id="selectDocumento" update=":formCrearDocumento" 
+                                                         oncomplete="PF('CrearDocumento').show();" value="Documento"/>
+                                        <p:commandButton id="selectVideo" update=":formCrearVideo" 
+                                                         oncomplete="PF('CrearVideo').show();" value="Video"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                                <p:panel >
+                                    <h:panelGrid columns="3">
+                                        <p:commandButton update="msgs2 msgs1 " id="addButton" value="Guardar"
+                                                         actionListener="#{capacitacionBean.crearCapacitacion()}"  
+                                                         process="@this" onclick = "reload()"/>                                            
+                                        <p:commandButton update="msgs1" value="Salir" onclick = "reload()"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </p:tab>
+                        </p:wizard>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear una Capacitacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear una Evaluacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrearEvalCap">
+                    <p:dialog header="Nueva Evaluación" widgetVar="CrearEvaluacionCap" modal="true" height="330">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="tema" value="Tema:" />
+                            <p:outputLabel id="tema" value="#{capacitacionBean.calendarioBean.capacitacion.tema}"/>
+                            <p:outputLabel for="fechaInicio" value="Fecha de inicio:" />
+                            <p:calendar id="fechaInicio" value="#{capacitacionBean.calendarioBean.eval.fechaInicio}"  pattern="dd-MM-yyyy" required="true" 
+                                        requiredMessage="Especifique la fecha de inicio de la evaluación"
+                                        mindate="#{capacitacionBean.calendarioBean.capacitacion.fechaFin}"
+                                        maxdate="#{calendarioBean.maxFecha}" timeZone="GMT-5" >
+                                <p:ajax event="dateSelect" listener="#{calendarioBean.obtenerMinFechaEval}" update="fechaFin" />
+                            </p:calendar>
+                            <p:outputLabel for="fechaFin" value="Fecha de fin:"/>
+                            <p:calendar id="fechaFin" value="#{capacitacionBean.calendarioBean.eval.fechaFin}" pattern="dd-MM-yyyy" required="true" 
+                                        requiredMessage="Especifique la fecha de finalización de la evaluación" 
+                                        mindate="#{calendarioBean.minFecha}" timeZone="GMT-5" >
+                                <p:ajax event="dateSelect" listener="#{calendarioBean.obtenerMaxFechaEval}" update="fechaInicio" />
+                            </p:calendar>
+                            <p:outputLabel for="tiempo" value="Tiempo de duración:" />
+                            <p:calendar id="tiempo" value="#{capacitacionBean.calendarioBean.eval.tiempoDuracion}" pattern="HH:mm" timeOnly="true" 
+                                        timeZone="GMT-5" required="true" requiredMessage="Especifique el tiempo de duracion de la evaluación" />
+                            <p:outputLabel for="calificacion" value="Calificación:" />
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:selectOneRadio id="calificacion" value="#{capacitacionBean.calendarioBean.eval.calificacion}" 
+                                                  required="true" requiredMessage="Especifique la calificacion de la evaluación">
+                                    <f:selectItem itemLabel="10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" itemValue="10" />
+                                    <f:selectItem itemLabel="20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" itemValue="20" />
+                                    <f:selectItem itemLabel="100" itemValue="100" />
+                                </p:selectOneRadio>
+                            </h:panelGrid>
+                            <p:outputLabel value="Descripción:"/>
+                            <p:inputTextarea value="#{capacitacionBean.calendarioBean.eval.descripcion}" onkeypress="return validarDireccion(event)"/> 
+                            <!-- -->
+                            <p:commandButton update="msgs1" action="#{capacitacionBean.calendarioBean.guardarEvaluacion(actionEvent)}" value="Guardar"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear una Evaluacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO crear evaluacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrearEval">
+                    <p:dialog header="Nueva Evaluación" widgetVar="CrearEvaluacion" modal="true" height="330">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="tema" value="Tema:" />
+                            <p:outputLabel id="tema" value="#{evaluacionCapacitacionBean.capacitacion.tema}"/>
+                            <p:outputLabel for="fechaInicio" value="Fecha de inicio:" />
+                            <p:calendar id="fechaInicio" value="#{evaluacionCapacitacionBean.evaluacion.fechaInicio}"  pattern="dd-MM-yyyy" required="true" 
+                                        requiredMessage="Especifique la fecha de inicio de la evaluación"
+                                        mindate="#{evaluacionCapacitacionBean.minFechaI}"
+                                        maxdate="#{evaluacionCapacitacionBean.maxFecha}" timeZone="GMT-5" >
+                                <p:ajax event="dateSelect" listener="#{evaluacionCapacitacionBean.obtenerMinFechaEval}" update="fechaFin" />
+                            </p:calendar>
+                            <p:outputLabel for="fechaFin" value="Fecha de fin:"/>
+                            <p:calendar id="fechaFin" value="#{evaluacionCapacitacionBean.evaluacion.fechaFin}" pattern="dd-MM-yyyy" required="true" 
+                                        requiredMessage="Especifique la fecha de finalización de la evaluación" 
+                                        mindate="#{evaluacionCapacitacionBean.minFecha}" timeZone="GMT-5" >
+                                <p:ajax event="dateSelect" listener="#{evaluacionCapacitacionBean.obtenerMaxFechaEval}" update="fechaInicio" />
+                            </p:calendar>
+                            <p:outputLabel for="tiempo" value="Tiempo de duración:" />
+                            <p:calendar id="tiempo" value="#{evaluacionCapacitacionBean.evaluacion.tiempoDuracion}" pattern="HH:mm" timeOnly="true" 
+                                        timeZone="GMT-5" required="true" requiredMessage="Especifique el tiempo de duracion de la evaluación" />
+                            <p:outputLabel for="calificacion" value="Calificación:" />
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:selectOneRadio id="calificacion" value="#{capacitacionBean.calendarioBean.eval.calificacion}" 
+                                                  required="true" requiredMessage="Especifique la calificacion de la evaluación">
+                                    <f:selectItem itemLabel="10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" itemValue="10" />
+                                    <f:selectItem itemLabel="20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" itemValue="20" />
+                                    <f:selectItem itemLabel="100" itemValue="100" />
+                                </p:selectOneRadio>
+                            </h:panelGrid>
+                            <p:outputLabel value="Descripción:"/>
+                            <p:inputTextarea value="#{evaluacionCapacitacionBean.evaluacion.descripcion}" onkeypress="return validarDireccion(event)"/> 
+                            <!-- -->
+                            <p:commandButton update="msgs1 :dataTable" action="#{evaluacionCapacitacionBean.guardarEvaluacion()}" value="Guardar" onclick="reload()"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear una Evaluacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver una Capacitacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrearCap">
+                    <p:dialog header="Capacitacion" widgetVar="CrearCap" modal="true" height="230">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid id="panelDatos1" columns="2">
+                            <p:outputLabel style="font-weight:bold;" for="tema" value="Tema:" />
+                            <p:outputLabel id="tema" value="#{capacitacionBean.calendarioBean.capacitacion.tema}" />
+                            <p:outputLabel style="font-weight:bold;" value="Lugar:" />
+                            <p:outputLabel value="#{capacitacionBean.calendarioBean.capacitacion.lugar}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4">
+                            <p:outputLabel style="font-weight:bold;" value="Fecha:" />
+                            <h:outputText value="#{capacitacionBean.calendarioBean.capacitacion.fechaInicio}"  >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                            <p:outputLabel style="font-weight:bold;" value="-" />
+                            <h:outputText value="#{capacitacionBean.calendarioBean.capacitacion.fechaFin}"  >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4">
+                            <p:outputLabel style="font-weight:bold;" value="Horario:" />
+                            <h:outputText value="#{capacitacionBean.calendarioBean.capacitacion.horaInicio}"  >
+                                <f:convertDateTime pattern="HH:mm" />
+                            </h:outputText>
+                            <p:outputLabel style="font-weight:bold;" value="-" />
+                            <h:outputText value="#{capacitacionBean.calendarioBean.capacitacion.horaFin}"  > 
+                                <f:convertDateTime pattern="HH:mm" />
+                            </h:outputText>
+                            <p:outputLabel style="font-weight:bold;" value="Estado: " />
+                            <p:outputLabel value="#{calendarioBean.capacitacion.activo}" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel style="font-weight:bold;" value="Observaciones"/>
+                            <p:outputLabel value="#{calendarioBean.capacitacion.observaciones}" style="width: 360px; height: 100px"/>                                            
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal ver un Documento _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear un Documento _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrearDocumento">
+                    <p:dialog header="Nuevo Documento" widgetVar="CrearDocumento" modal="true" height="200">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombreDoc" value="Nombre:" />
+                            <p:inputText id="nombreDoc" value="#{recursoBean.recurso.nombre}" required="true" requiredMessage="Especifique un nombre al documento"/>
+                            <p:outputLabel for="autor" value="Autor:" />
+                            <p:inputText id="autor" value="#{recursoBean.recurso.autor}"/>
+                            <p:outputLabel for="descripcion" value="Descripcion:" />
+                            <p:inputText id="descripcion" value="#{recursoBean.recurso.descripcion}"/>
+                            <p:outputLabel for="enlace" value="Enlace:" />
+                            <p:inputText id="enlace" value="#{recursoBean.recurso.pathPdf}" required="true" requiredMessage="Especifique el enlacea del documento"/>
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1" action="#{recursoBean.guardarRecurso()}" value="Aceptar"/>
+                            <p:watermark for="enlace" value="http://es.scribd.com" id="watermark" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Documento _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear un Video _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrearVideo">
+                    <p:dialog header="Nuevo Video" widgetVar="CrearVideo" modal="true" height="200">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombreVideo" value="Nombre:" />
+                            <p:inputText id="nombreVideo"  value="#{recursoBean.recurso.nombre}" required="true" requiredMessage="Especifique un nombre al video"/>
+                            <p:outputLabel for="autor" value="Autor:" />
+                            <p:inputText id="autor" value="#{recursoBean.recurso.autor}"/>
+                            <p:outputLabel for="descripcion" value="Descripcion:" />
+                            <p:inputText id="descripcion" value="#{recursoBean.recurso.descripcion}"/>
+                            <p:outputLabel for="enlace" value="Enlace:" />
+                            <p:inputText id="enlace" value="#{recursoBean.recurso.pathVideo}" required="true" requiredMessage="Especifique el enlacea del video"/>
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1" action="#{recursoBean.guardarRecurso()}" value="Aceptar"/>
+                            <p:watermark for="enlace" value="http://www.youtube.com/" id="watermark" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Video _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar una Capacitacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminar">
+                    <p:dialog header="Eliminar la capacitacion" widgetVar="Eliminar" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Está seguro de eliminar la capacitacion&nbsp; #{calendarioBean.capacitacion.tema}" />
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton update=":dataTable" action="#{calendarioBean.eliminarCapacitacion(actionEvent)}" value="Aceptar"   onclick="reload()"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar una Capacitacion  _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

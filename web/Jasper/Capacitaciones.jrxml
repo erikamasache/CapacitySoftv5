@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="txtRol" class="java.lang.String"/>
+	<field name="tema" class="java.lang.String"/>
+	<field name="fecha_inicio" class="java.lang.String"/>
+	<field name="lugar" class="java.lang.String"/>
+	<field name="fecha_fin" class="java.lang.String"/>
+	<field name="horario" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="133" y="23" width="295" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UNIVERSIDAD NACIONAL DE LOJA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="155" y="47" width="291" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Departamento de Gestion de Riesgos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="10" width="514" height="0" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="2.25" lineStyle="Solid" lineColor="#FF3333"/>
+					<topPen lineWidth="2.25" lineStyle="Solid" lineColor="#FF3333"/>
+					<leftPen lineWidth="2.25" lineStyle="Solid" lineColor="#FF3333"/>
+					<bottomPen lineWidth="2.25" lineStyle="Solid" lineColor="#FF3333"/>
+					<rightPen lineWidth="2.25" lineStyle="Solid" lineColor="#FF3333"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="14" width="514" height="2"/>
+				<box>
+					<pen lineWidth="2.0" lineColor="#33CC00"/>
+					<topPen lineWidth="2.0" lineColor="#33CC00"/>
+					<leftPen lineWidth="2.0" lineColor="#33CC00"/>
+					<bottomPen lineWidth="2.0" lineColor="#33CC00"/>
+					<rightPen lineWidth="2.0" lineColor="#33CC00"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement x="200" y="0" width="158" height="20"/>
+				<textElement/>
+				<text><![CDATA[LISTA DE CAPACITACIONES]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="11" y="2" width="132" height="20"/>
+				<textElement/>
+				<text><![CDATA[TEMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="286" y="2" width="72" height="20"/>
+				<textElement/>
+				<text><![CDATA[FECHA INICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="172" y="2" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[LUGAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="381" y="2" width="72" height="20"/>
+				<textElement/>
+				<text><![CDATA[FECHA FIN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="475" y="2" width="75" height="20"/>
+				<textElement/>
+				<text><![CDATA[HORARIO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<textField>
+				<reportElement x="11" y="0" width="132" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{tema}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="286" y="3" width="72" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fecha_inicio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="172" y="4" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{lugar}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="381" y="3" width="72" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fecha_fin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="475" y="5" width="75" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{horario}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="44" splitType="Stretch">
+			<textField>
+				<reportElement x="71" y="0" width="387" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{txtRol}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Impreso por:]]></text>
+			</staticText>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="72" y="23" width="178" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="12" splitType="Stretch"/>
+	</summary>
+</jasperReport>

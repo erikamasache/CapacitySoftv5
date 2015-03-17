@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Carreras _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h:form id="atras">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="evaluacion?faces-redirect=true"/>
+                    </h:form>
+                    <h3 class="titulos_tablas">Lista de Preguntas</h3>
+                    <div class="botones">
+                        <h:form id="crear">
+                            <p:commandButton id="selectCrear" update=":formCrear" actionListener="#{preguntaBean.instanciarPregunta}"
+                                             oncomplete="PF('Crear').show();" value="Crear">
+                            </p:commandButton>
+                        </h:form>                                      
+                    </div>
+                    <h:form id="formPreg">
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="pre"
+                                     value="#{evaluacionBean.preguntaBean.listaPreguntas}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:10%" headerText="Tipo de pregunta">
+                                <h:outputText value="#{pre.tipoPregunta}" />
+                            </p:column>
+
+                            <p:column style="width:40%" headerText="Descripción">
+                                <h:outputText value="#{pre.descripcion}" />
+                            </p:column>
+
+                            <p:column style="width:13%"> 
+                                <p:commandButton value="Agregar Respuesta" action="#{evaluacionBean.preguntaBean.respuestaBean.obtenerPregunta(pre)}">
+                                </p:commandButton>             
+                            </p:column>  
+
+                            <p:column style="width:7.5em">                    
+                                <p:commandButton id="modalVer" update=":formVer" icon="ui-icon-contact" oncomplete="PF('Ver').show();" title="Ver Datos">
+                                    <f:setPropertyActionListener value="#{pre}" target="#{evaluacionBean.preguntaBean.pregunta}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="modalEditar" update=":formEditar" icon="ui-icon-pencil" oncomplete="PF('Editar').show();" title="Editar Datos">
+                                    <f:setPropertyActionListener value="#{pre}" target="#{evaluacionBean.preguntaBean.pregunta}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="selectEliminar" update=":formEliminar" 
+                                                 oncomplete="PF('Eliminar').show();" icon="ui-icon-trash" title="Eliminar" >
+                                    <f:setPropertyActionListener value="#{pre}" target="#{evaluacionBean.preguntaBean.pregunta}"/>
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable> 
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Carreras _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrear">
+                    <p:dialog header="Nueva Pregunta" widgetVar="Crear" modal="true" height="180">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" > 
+                            <p:outputLabel for="descripcion" value="Pregunta:"/>
+                            <p:inputTextarea id="descripcion" value="#{evaluacionBean.preguntaBean.pregunta.descripcion}"/>
+                            <p:outputLabel for="tipoPregunta" value="Tipo de pregunta:"/>
+                            <p:selectOneMenu id="tipoPregunta" value="#{evaluacionBean.preguntaBean.pregunta.tipoPregunta}" 
+                                             style="width:100%;" required="true" 
+                                             requiredMessage="Especifique el tipo de pregunta">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="Simple" itemValue="Simple" />
+                                <f:selectItem itemLabel="Multiple" itemValue="Multiple" />
+                            </p:selectOneMenu>
+                            <p:commandButton value="Cancelar" onclick="reload()" />
+                            <p:commandButton update="msgs1 :formPreg" action="#{evaluacionBean.preguntaBean.guardarPregunta()}" value="Aceptar" onclick="reload()" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVer">
+                    <p:dialog header="Datos de la pregunta" widgetVar="Ver" modal="true" height="130">
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel style="font-weight:bold;" value="Tipo de Pregunta: " />
+                            <p:outputLabel value="#{evaluacionBean.preguntaBean.pregunta.tipoPregunta}" /> 
+                            <p:outputLabel style="font-weight:bold;" value="Descripción: " />
+                            <p:outputLabel value="#{evaluacionBean.preguntaBean.pregunta.descripcion}" /> 
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver una Carrera  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Editar una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEditar">
+                    <p:dialog header="Editar pregunta" widgetVar="Editar" modal="true" height="180">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="descripcion" value="Pregunta:"/>
+                            <p:inputText id="descripcion" value="#{evaluacionBean.preguntaBean.pregunta.descripcion}"/>
+                            <p:outputLabel for="tipoPregunta" value="Tipo de pregunta:"/>
+                            <p:selectOneMenu id="tipoPregunta" value="#{evaluacionBean.preguntaBean.pregunta.tipoPregunta}" 
+                                             style="width:100%;" required="true" 
+                                             requiredMessage="Especifique el tipo de pregunta">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="Simple" itemValue="Simple" />
+                                <f:selectItem itemLabel="Multiple" itemValue="Multiple" />
+                            </p:selectOneMenu> 
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton update="msgs1 :formPreg" action="#{evaluacionBean.preguntaBean.editarPregunta()}" value="Guardar"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Editar una Carrera  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminar">
+                    <p:dialog header="Eliminar pregunta" widgetVar="Eliminar" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <h:outputLabel value="Está seguro de eliminar la pregunta &nbsp; #{evaluacionBean.preguntaBean.pregunta.identificador}"/>
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton action="#{evaluacionBean.preguntaBean.eliminarPregunta()}" value="Aceptar"  onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

@@ -1,0 +1,241 @@
+@charset "utf-8";
+
+body {
+    background: url(../resources/images/fondo.jpg);
+    font-size: 12px;
+    margin: 0 auto;
+}
+
+.contenedor1 {
+    width: 1164px;
+    margin: 0 auto;
+}
+
+.contenedor2 {
+    width: 1024px;
+}
+
+
+.contenedorbarra {
+    position: fixed;
+    z-index: 1;
+    width: 1024px;
+}
+
+#pagewrap {
+    position: fixed;
+    bottom: 30px; /* Distancia desde abajo */
+    right: 30px; /* Distancia desde la derecha */
+}
+
+#back-top span {
+    width: 60px; /* Ancho del botón */
+    height: 60px; /* Alto del botón */
+    display: block;
+    background:
+        url(../resources/images/flecha-arriba.png)
+        no-repeat center center;
+}
+
+.contenedorbtn {
+    float: right;
+    font-size: 14px;
+}
+
+.contenedorbtn  ul.nav {
+    list-style: none;
+    display: block;
+    width: 140px;
+    left: 100px;
+    padding: 70px 0 0px 0;
+    -webkit-background-size: 50% 100%;
+}
+
+.contenedorbtn  li {
+    margin: 5px 0 0 0;
+}
+
+.contenedorbtn ul.nav li a {
+    -webkit-transition: all 0.3s ease-out;
+    color: #174867;
+    padding: 7px 15px 7px 15px;
+    -webkit-border-top-right-radius: 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    width: 100px;
+    display: block;
+    text-decoration: none;
+    -webkit-box-shadow: 2px 2px 4px #888;
+}
+
+.contenedorbtn ul.nav li a:hover {
+    background: #ebebeb;
+    color: #67a5cd;
+    padding: 7px 15px 7px 30px;
+}
+
+.backgroundPopup2 {
+    display: none;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: #000000;
+    border: 1px solid #cecece;
+    z-index: 2;
+    border-spacing :  0;
+}
+
+.popupContact2 {
+    display: none;
+    z-index: 3;
+}
+
+.popupContactClose2 {
+    font-size: 14px;
+    line-height: 14px;
+    right: 16px;
+    top: 10px;
+    position: absolute;
+    color: #6fa5fd;
+    font-weight: 700;
+    display: block;
+    cursor: pointer;
+}
+
+.backgroundPopup {
+    display: none;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: #000000;
+    border: 1px solid #cecece;
+    z-index: 2;
+}
+
+.popupContact {
+    display: none;
+    z-index: 3;
+}
+
+.popupContactClose {
+    font-size: 14px;
+    line-height: 14px;
+    right: 16px;
+    top: 10px;
+    position: absolute;
+    color: #6fa5fd;
+    font-weight: 700;
+    display: block;
+    cursor: pointer;
+}
+
+.login {
+    border: 3px solid rgba(147, 184, 189, 0.8);
+    border-radius: 5px;
+}
+
+.rol {
+    cursor: pointer;
+    width: 188px;
+    height: 26px;
+}
+
+table {
+    font-size: 12px;
+}
+
+.nuevouser * {
+    color: #8A2839;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.nuevouser label {
+    color: black;
+}
+
+.nuevouser input {
+    height: 20px;
+    width: 178px;
+}
+
+.editaruser * {
+    color: #8A2839;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.editaruser label {
+    color: black;
+}
+
+.editaruser input {
+    height: 20px;
+    width: 178px;
+}
+
+.buscar {
+    color: #8A2839;
+    font-size: 13px;
+    float: right;
+}
+
+imageCropperImagemTemporaria {
+    width: 100px;
+}
+
+.ui-panel,
+.ui-panel-content,
+.panel{  
+    background: url(../resources/images/fondo.jpg);
+    padding: 15px;
+    margin: 0;
+}
+
+.top  {
+    filter: alpha(opacity = 80);
+    width: 5000px;
+    z-index: 99999999;
+    background:
+        url(../resources/images/fondo.jpg)
+}
+
+.espere {
+    position: absolute;
+    margin-left: 540px;
+    margin-right: auto;
+    margin-top: -100px;
+    z-index: 999;
+}
+#pie_index {
+    position: fixed;
+    clear: both;
+    line-height: 24px;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    height: 50px;
+    bottom: 0px;
+}
+
+/*
+.ui-panel,
+.ui-widget-content{
+    padding: 0px !important;
+}*/
+
+.form2 {
+    display: block;
+    margin-top: 0em;
+}
+
+.ui-picklist
+.ui-picklist-list {
+    width: 300px !important;
+}
+
+
+

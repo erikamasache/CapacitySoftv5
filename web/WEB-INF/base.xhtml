@@ -1,0 +1,312 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="default.css"/>
+        <h:outputStylesheet library="css" name="estiloBase.css"/>
+        <h:outputScript library="js" name="otros.js" />
+        <h:outputScript library="js" name="es.js" />
+        <title>CapacitySoft</title>
+
+    </h:head>
+
+    <h:body class="jumbotron">
+        <div id="top" >
+            <div>
+                <h:form id="formMenu"> 
+                    <p:growl id="messages"/>
+
+                    <p:menubar>
+                        <p:submenu rendered="#{request.isUserInRole('Administrador')}" label="Inicio" icon="ui-icon-document">
+                            <p:menuitem icon="ui-icon-contact" value="Capacitacion"  url="../capacitacion/capacitacion.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Lista capacitaciones"  url="../capacitacion/listaCapacitaciones.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Capacitados"  url="../capacitacion/capacitado.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Capacitadores"  url="../administrador/capacitador.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Sectores"  url="../capacitacion/sector.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Evaluaciones"  url="../capacitacion/evaluacion.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Recursos"  url="../capacitacion/capacitacionRecurso.xhtml"/>
+                            <p:separator />
+                            <p:menuitem value="Salir" action="#{logoutBean.logout()}" />
+                        </p:submenu>
+
+                        <p:submenu rendered="#{request.isUserInRole('Capacitador')}" label="Inicio" icon="ui-icon-document">
+                            <p:menuitem icon="ui-icon-contact" value="Capacitacion"  url="../capacitacion/capacitacion.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Capacitados"  url="../capacitacion/capacitado.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Sectores"  url="../capacitacion/sector.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Recursos"  url="../capacitacion/capacitacionRecurso.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Evaluaciones"  url="../capacitacion/evaluacion.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Mis capacitaciones"  url="../capacitador/miCapacitacion.xhtml"/>
+                            <p:separator />
+                            <p:menuitem value="Salir" action="#{logoutBean.logout()}" />
+                        </p:submenu>
+
+                        <p:submenu rendered="#{request.isUserInRole('Capacitado')}" label="Inicio" icon="ui-icon-document">
+                            <p:menuitem icon="ui-icon-contact" value="Mis capacitaciones"  url="./miCapacitacionCapacitado.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Induccion"  url="./induccion.xhtml"/>
+                            <p:menuitem icon="ui-icon-contact" value="Capacitaciones"  url="./capacitacionCapacitado.xhtml"/>
+                            <p:separator />
+                            <p:menuitem value="Salir" action="#{logoutBean.logout()}" />
+                        </p:submenu>
+                        <p:menuitem value="Help" icon="ui-icon-help"/>
+                        <p:menuitem value="" style="padding-left: 700px"/>
+                        <p:submenu  rendered="#{request.isUserInRole('Administrador')}" label="#{loginBean.nombre}">
+                            <p:menuitem value="Perfil" oncomplete="PF('CrearAdministrador').show();" />
+                            <p:menuitem value="Cambio de contraseña" oncomplete="PF('ContraseniaCambio').show();" />
+                            <p:menuitem value="Clave de acceso" oncomplete="PF('ClaveCambio').show();" />
+                        </p:submenu>
+                        <p:submenu rendered="#{request.isUserInRole('Capacitador')}" label="#{loginBean.nombre}">
+                            <p:menuitem value="Perfil" oncomplete="PF('CrearCapacitador').show();" />
+                            <p:menuitem value="Cambio de contraseña" oncomplete="PF('ContraseniaCambio').show();" />
+                        </p:submenu>
+                        <p:submenu rendered="#{request.isUserInRole('Capacitado')}" label="#{loginBean.nombre}" >
+                            <p:menuitem value="Perfil" oncomplete="PF('CrearCapacitado').show();" />
+                            <p:menuitem value="Cambio de contraseña" oncomplete="PF('ContraseniaCambio').show();"/>
+                        </p:submenu>
+                        <p:menuitem value="Cerrar sesión" icon="ui-icon-close" action="#{logoutBean.logout}"/>
+                        <p:menuitem id="tema" style="width: 250px">
+                            <p:selectOneMenu id="advanced" value="#{temaBean.theme}" converter="themeConverter" var="t" filter="true" filterMatchMode="contains">
+                                <f:selectItems value="#{temaBean.themes}" var="theme" itemLabel="#{theme.displayName}" itemValue="#{theme}" />
+                                <p:column>
+                                    <h:outputText value="#{t.displayName}" />
+                                </p:column>
+                                <p:ajax event="change" update=":formMenu" listener="#{temaBean.establecerTema}" 
+                                        onsuccess="window.location.reload()" />
+                            </p:selectOneMenu>
+                        </p:menuitem>
+                    </p:menubar>
+                </h:form>
+
+                <h:form id="formContrasenia2">
+                    <p:dialog id="contraseniaDialog2" widgetVar="Contrasenia" modal="true" header="Contraseña">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" cellpadding="5" >
+                            <p:outputLabel for="contrasenia" value="Contraseña:"/>
+                            <p:password id="contrasenia"  value="#{perfilBean.contrasenia}" required="true" 
+                                        requiredMessage="Ingrese la contraseña" />
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1" value="Perfil" action="#{perfilBean.presentarDialog}"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="formContrasenia">
+                    <p:dialog id="contraseniaDialog2" widgetVar="ContraseniaCambio" modal="true" header="Contraseña">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" cellpadding="5" >
+                            <p:outputLabel for="contrasenia" value="Contraseña:"/>
+                            <p:password id="contrasenia"  value="#{perfilBean.contrasenia}" required="true" 
+                                        requiredMessage="Ingrese la contraseña" />
+                            <h:outputLabel for="pwd1" styleClass="espacios" value="Contraseña: *" />
+                            <p:password id="pwd1" value="#{perfilBean.contrasenia2}" match="pwd2" required="true" 
+                                        requiredMessage="Especifique la contraseña" feedback="true" validatorMessage="Las contraseñas no coinciden"
+                                        onkeypress="return validarEC(event)"/>
+
+                            <h:outputLabel for="pwd2" styleClass="espacios" value="Repita Contraseña: *" />
+                            <p:password id="pwd2" value="#{perfilBean.contrasenia2}" required="true" 
+                                        requiredMessage="Especifique la contraseña" feedback="true"
+                                        onkeypress="return validarEC(event)"/>
+                            <p:commandButton update="msgs1 :formContrasenia" value="Guardar" action="#{perfilBean.guardarContrasenia}"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <h:form id="formClave">
+                    <p:dialog id="claveDialog" widgetVar="ClaveCambio" modal="true" header="Contraseña">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" cellpadding="5" > 
+                            <p:outputLabel for="contrasenia" value="Contraseña:"/>
+                            <p:password id="contrasenia"  value="#{perfilBean.contrasenia}" required="true" 
+                                        requiredMessage="Ingrese la contraseña" />
+                            <p:outputLabel for="clave" value="Clave:"/>
+                            <p:inputText id="clave"  value="#{perfilBean.adm.claveAcceso}" required="true" 
+                                         requiredMessage="Ingrese la clave" />
+                            <p:commandButton update="msgs1 :formClave" value="Guardar" action="#{perfilBean.cambiarClave}"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+
+
+                <h:form id="formAdminist">
+                    <p:dialog id="DialogAdministrador" header="Perfil" widgetVar="CrearAdministrador" modal="true" height="500" width="390">   
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" cellpadding="3" >
+                            <p:outputLabel for="nombres" value="Nombres:"/>
+                            <p:inputText id="nombres"  value="#{perfilBean.adm.nombre}" required="true" 
+                                         label="Nombres" requiredMessage="Especifique el nombre del capacitado" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="apellidos" value="Apellidos:"/>
+                            <p:inputText id="apellidos"  value="#{perfilBean.adm.apellido}" required="true" 
+                                         label="Apellidos" requiredMessage="Especifique el apellido del capacitado" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:selectOneMenu value="#{perfilBean.adm.tipoIdentificacion}" style="width:90%;line-height: 15px">
+                                <f:selectItem itemLabel="Cédula" itemValue="1"/>
+                                <f:selectItem itemLabel="Pasaporte" itemValue="2"/>
+                            </p:selectOneMenu>
+                            <p:inputText id="cedula" value="#{perfilBean.adm.cedula}" required="true" 
+                                         label="Cedula" requiredMessage="Especifique la cédula del capacitado" style="line-height: 15px"
+                                         onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel for="direccion" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{perfilBean.adm.direccion}" required="true" 
+                                         label="Direccion" requiredMessage="Especifique la dirección del capacitado"
+                                         onkeypress="return validarDireccion(event)"/>
+                            <p:outputLabel value="Teléfono domiciliario:" />
+                            <p:inputMask value="#{perfilBean.adm.telefonoDomicilio}" mask="(099) 999-999" />
+                            <p:outputLabel for="celular" value="Celular:" />
+                            <p:inputMask id="celular" value="#{perfilBean.adm.celular}" mask="0999-999-999" 
+                                         required="true" label="Celular" 
+                                         requiredMessage="Especifique el celular del capacitado"/>
+                            <p:outputLabel for="correo" value="E-mail:" />
+                            <p:inputText id="correo" value="#{perfilBean.adm.correo}" required="true" 
+                                         label="Correo" requiredMessage="Especifique el correo del capacitado" 
+                                         onchange="validarEmail(this)" />
+                            <p:outputLabel for="cargo" value="Cargo:" />
+                            <p:inputText id="cargo" value="#{perfilBean.adm.cargo}" required="true" 
+                                         label="Cargo" requiredMessage="Especifique el cargo del capacitado" 
+                                         onkeypress="return validarLetras(event)"/> 
+                            <p:outputLabel for="telefonoOfinica" value="Teléfono oficina:" />
+                            <p:inputMask id="telefonoOfinica" value="#{perfilBean.adm.telefonoOficina}" mask="(099) 999-999"  />
+                            <p:outputLabel value="Extensión oficina:" />
+                            <p:inputText value="#{perfilBean.adm.extTelefonoOficina}" onkeydown="return validarNumeros(event)"/>
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1 :formAdminist" value="Guardar" action="#{perfilBean.guardarAdministrador}"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear un Capacitador _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCapacitador1">
+                    <p:dialog id="DialogCapacitador" header="Perfil" widgetVar="CrearCapacitador" modal="true" height="500" width="390" > 
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" cellpadding="3" >
+                            <p:outputLabel for="nombres" value="Nombres:"/>
+                            <p:inputText id="nombres" value="#{perfilBean.capacitador.nombre}" required="true" 
+                                         label="Nombres" requiredMessage="Especifique el nombre del capacitador" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="apellidos" value="Apellidos:"/>
+                            <p:inputText id="apellidos" value="#{perfilBean.capacitador.apellido}" required="true" 
+                                         label="Apellidos" requiredMessage="Especifique el apellido del capacitador" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:selectOneMenu value="#{perfilBean.capacitado.tipoIdentificacion}" style="width:90%;line-height: 15px">
+                                <f:selectItem itemLabel="Cédula" itemValue="1"/>
+                                <f:selectItem itemLabel="Pasaporte" itemValue="2"/>
+                            </p:selectOneMenu>
+                            <p:inputText id="cedula" value="#{perfilBean.capacitador.cedula}" required="true" 
+                                         label="Cedula" requiredMessage="Especifique la cédula del capacitado" style="line-height: 15px"
+                                         onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel value="Fecha de nacimiento:"/>
+                            <p:calendar id="calendarIngreso" value="#{perfilBean.capacitador.fechaNacimiento}" locale="es" 
+                                        navigator="true" pattern="dd-MM-yyyy" />
+                            <p:outputLabel for="direccion" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{perfilBean.capacitador.direccion}" required="true" 
+                                         label="Direccion" requiredMessage="Especifique la dirección del capacitador"
+                                         onkeypress="return validarDireccion(event)"/>
+                            <p:outputLabel value="Teléfono domiciliario:" />
+                            <p:inputMask value="#{perfilBean.capacitador.telefonoDomicilio}" mask="(099) 999-999" />
+                            <p:outputLabel for="celular" value="Celular:" />
+                            <p:inputMask id="celular" value="#{perfilBean.capacitador.celular}" mask="0999-999-999" 
+                                         required="true" label="Celular" requiredMessage="Especifique el celular del capacitador"/>
+                            <p:outputLabel for="correo" value="E-mail:" />
+                            <p:inputText id="correo" value="#{perfilBean.capacitador.correo}" required="true" label="Correo" 
+                                         requiredMessage="Especifique el correo del capacitador" onchange="validarEmail(this)" 
+                                         onkeypress="return validarLetrasEmail(event)" placeholder="ejemplo@mail.com"/>
+                            <p:outputLabel for="cargo" value="Cargo:" />
+                            <p:inputText id="cargo" value="#{perfilBean.capacitador.cargo}" required="true" label="Cargo" 
+                                         requiredMessage="Especifique el cargo del capacitador" onkeypress="return validarLetras(event)"/>  
+                            <p:outputLabel value="Fecha de ingreso:" />
+                            <p:calendar id="calendarNacimiento" value="#{perfilBean.capacitador.fechaIngreso}" locale="es" 
+                                        navigator="true" pattern="dd-MM-yyyy" />
+                            <p:outputLabel for="telefonoOfinica" value="Teléfono oficina:" />
+                            <p:inputMask id="telefonoOfinica" value="#{perfilBean.capacitador.telefonoOficina}" mask="(099) 999-999"  />
+                            <p:outputLabel value="Extensión oficina:" />
+                            <p:inputText value="#{perfilBean.capacitador.extTelefonoOficina}" onkeydown="return validarNumeros(event)"/>
+
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1 :formCapacitador1" value="Guardar" action="#{perfilBean.guardarCapacitador}"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Capacitador _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear un Capacitado _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCapacitado">
+                    <p:dialog id="DialogCapacitado" header="Perfil" widgetVar="CrearCapacitado" modal="true" height="500" width="390" > 
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" cellpadding="3" >
+                            <p:outputLabel for="nombres" value="Nombres:"/>
+                            <p:inputText id="nombres" value="#{perfilBean.capacitado.nombre}" required="true" 
+                                         label="Nombres" requiredMessage="Especifique el nombre del capacitador" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="apellidos" value="Apellidos:"/>
+                            <p:inputText id="apellidos" value="#{perfilBean.capacitado.apellido}" required="true" 
+                                         label="Apellidos" requiredMessage="Especifique el apellido del capacitador" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:selectOneMenu value="#{perfilBean.capacitado.tipoIdentificacion}" style="width:90%;line-height: 15px">
+                                <f:selectItem itemLabel="Cédula" itemValue="1"/>
+                                <f:selectItem itemLabel="Pasaporte" itemValue="2"/>
+                            </p:selectOneMenu>
+                            <p:inputText id="cedula" value="#{perfilBean.capacitado.cedula}" required="true" 
+                                         label="Cedula" requiredMessage="Especifique la cédula del capacitado" style="line-height: 15px"
+                                         onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel for="direccion" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{perfilBean.capacitado.direccion}" required="true" 
+                                         label="Direccion" requiredMessage="Especifique la dirección del capacitador"
+                                         onkeypress="return validarDireccion(event)"/>
+                            <p:outputLabel value="Teléfono domiciliario:" />
+                            <p:inputMask value="#{perfilBean.capacitado.telefonoDomicilio}" mask="(099) 999-999" />
+                            <p:outputLabel for="celular" value="Celular:" />
+                            <p:inputMask id="celular" value="#{perfilBean.capacitado.celular}" mask="0999-999-999" 
+                                         required="true" label="Celular" requiredMessage="Especifique el celular del capacitador"/>
+                            <p:outputLabel for="correo" value="E-mail:" />
+                            <p:inputText id="correo" value="#{perfilBean.capacitado.correo}" required="true" label="Correo" 
+                                         requiredMessage="Especifique el correo del capacitador" onchange="validarEmail(this)" 
+                                         onkeypress="return validarLetrasEmail(event)" placeholder="ejemplo@mail.com"/>
+                            <p:outputLabel for="cargo" value="Cargo:" />
+                            <p:inputText id="cargo" value="#{perfilBean.capacitado.cargo}" required="true" label="Cargo" 
+                                         requiredMessage="Especifique el cargo del capacitador" onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="telefonoOfinica" value="Teléfono oficina:" />
+                            <p:inputMask id="telefonoOfinica" value="#{perfilBean.capacitado.telefonoOficina}" mask="(099) 999-999"  />
+                            <p:outputLabel value="Extensión oficina:" />
+                            <p:inputText value="#{perfilBean.capacitado.extTelefonoOficina}" onkeydown="return validarNumeros(event)"/>
+
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1 :formCapacitado" value="Guardar" action="#{perfilBean.guardarCapacitado}"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Capacitado _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+
+            </div>
+
+        </div>
+
+        <div id="content" > <!--class="center_content"> -->
+            <ui:insert name="content">Content</ui:insert>
+        </div>
+
+        <div id="bottom">
+            <!--<h:form>
+                <p:dock position="bottom">
+                    <p:menuitem icon="/resources/images/facebook.jpg" url="https://www.facebook.com/"/>
+                    <p:menuitem icon="/resources/images/twitter.jpg" url="https://www.twitter.com/"/>
+                </p:dock>
+            </h:form>
+            
+            <div id="pie_index">
+                <div style="text-align: right; float: right" id="google_translate_element">                
+                </div>
+                <center>Universidad Nacional de Loja</center>
+            </div>
+        
+            -->
+        </div>
+    </h:body>
+
+
+</html>

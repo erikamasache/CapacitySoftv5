@@ -1,0 +1,260 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:body >
+
+        <ui:composition template="./../WEB-INF/base.xhtml">            
+            <ui:define name="content">   
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Capacitadores _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h3 class="titulos_tablas">Capacitadores</h3>  
+                    <div class="botones">
+                        <h:form id="nuevoPDF">
+                            <h:commandLink action="#{capacitadorBean.exportarPDF()}" >
+                                <p:graphicImage value="/resources/images/pdf.jpg" width="24" height="30"/>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                    <div class="botones">
+                        <h:form id="crearCapacitador">
+                            <p:commandButton id="selectCrear" update=":formCrear" actionListener="#{capacitadorBean.instanciarCapacitador()}"
+                                             oncomplete="PF('Crear').show();" value="Crear">
+                            </p:commandButton>
+                        </h:form>
+                    </div> 
+                    <h:form id="formDataTable">
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="cap"
+                                     value="#{capacitadorBean.listaCapacitadores}" paginator="true"
+                                     rows="10" emptyMessage="No hay Capacitadores con esos datos"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true"
+                                     filteredValue="#{capacitadorBean.filterCapacitadores}">
+
+                            <p:column style="width:22%" headerText="Nombres" filterBy="#{cap.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{cap.nombre}" />
+                            </p:column>
+
+                            <p:column style="width:22%" headerText="Apellidos" filterBy="#{cap.apellido}" filterMatchMode="contains">
+                                <h:outputText value="#{cap.apellido}" />
+                            </p:column>
+
+                            <p:column style="width:14%" headerText="Identificación" filterBy="#{cap.cedula}">
+                                <h:outputText value="#{cap.cedula}" />
+                            </p:column> 
+
+                            <p:column style="width:14%" headerText="Cargo" filterBy="#{cap.cargo}">
+                                <h:outputText value="#{cap.cargo}" />                             
+                            </p:column>
+
+                            <p:column style="width:10%" headerText="Celular">
+                                <h:outputText value="#{cap.celular}" />                             
+                            </p:column>
+
+                            <p:column style="width:20%" headerText="E-mail">
+                                <h:outputText value="#{cap.correo}" />                             
+                            </p:column>
+
+                            <p:column style="width:7.5em"> 
+                                <p:commandButton id="modalVer" update=":formVer" icon="ui-icon-contact" oncomplete="PF('Ver').show();" 
+                                                 title="Ver Datos">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{capacitadorBean.capacitador}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="modalEditar" update=":formEditar" icon="ui-icon-pencil" oncomplete="PF('Editar').show();" 
+                                                 title="Editar Datos">
+                                    <f:setPropertyActionListener value="#{cap}" target="#{capacitadorBean.capacitador}"/>
+                                </p:commandButton>
+
+                                <p:commandButton id="selectEliminar" update=":formEliminar" 
+                                                 oncomplete="PF('Eliminar').show();" icon="ui-icon-trash" title="Eliminar" >
+                                    <f:setPropertyActionListener value="#{cap}" target="#{capacitadorBean.capacitador}"/>
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable> 
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Capacitadores _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear un Capacitador _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrear">
+                    <p:dialog header="Nuevo Capacitador" widgetVar="Crear" modal="true" height="500" width="390" > 
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" cellpadding="3" >
+                            <p:outputLabel for="nombres" value="Nombres:"/>
+                            <p:inputText id="nombres" value="#{capacitadorBean.capacitador.nombre}" required="true" 
+                                         label="Nombres" requiredMessage="Especifique el nombre del capacitador" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:outputLabel for="apellidos" value="Apellidos:"/>
+                            <p:inputText id="apellidos" value="#{capacitadorBean.capacitador.apellido}" required="true" 
+                                         label="Apellidos" requiredMessage="Especifique el apellido del capacitador" 
+                                         onkeypress="return validarLetras(event)"/>
+                            <p:selectOneMenu value="#{capacitadorBean.capacitador.tipoIdentificacion}" style="width:90%;line-height: 15px">
+                                <f:selectItem itemLabel="Cédula" itemValue="1"/>
+                                <f:selectItem itemLabel="Pasaporte" itemValue="2"/>
+                            </p:selectOneMenu>
+                            <p:inputText id="cedula" value="#{capacitadorBean.capacitador.cedula}" required="true" 
+                                         label="Cedula" requiredMessage="Especifique la cédula del capacitado" style="line-height: 15px"
+                                         onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel value="Fecha de nacimiento:"/>
+                            <p:calendar id="calendarIngreso" value="#{capacitadorBean.capacitador.fechaNacimiento}" locale="es" 
+                                        navigator="true" pattern="dd-MM-yyyy" />
+                            <p:outputLabel for="direccion" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{capacitadorBean.capacitador.direccion}" required="true" 
+                                         label="Direccion" requiredMessage="Especifique la dirección del capacitador"
+                                         onkeypress="return validarDireccion(event)"/>
+                            <p:outputLabel value="Teléfono domiciliario:" />
+                            <p:inputMask value="#{capacitadorBean.capacitador.telefonoDomicilio}" mask="(099) 999-999" />
+                            <p:outputLabel for="celular" value="Celular:" />
+                            <p:inputMask id="celular" value="#{capacitadorBean.capacitador.celular}" mask="0999-999-999" 
+                                         required="true" label="Celular" requiredMessage="Especifique el celular del capacitador"/>
+                            <p:outputLabel for="correo" value="E-mail:" />
+                            <p:inputText id="correo" value="#{capacitadorBean.capacitador.correo}" required="true" label="Correo" 
+                                         requiredMessage="Especifique el correo del capacitador" onchange="validarEmail(this)" 
+                                         onkeypress="return validarLetrasEmail(event)" placeholder="ejemplo@mail.com"/>
+                            <p:outputLabel for="cargo" value="Cargo:" />
+                            <p:inputText id="cargo" value="#{capacitadorBean.capacitador.cargo}" required="true" label="Cargo" 
+                                         requiredMessage="Especifique el cargo del capacitador" onkeypress="return validarLetras(event)"/>  
+                            <p:outputLabel value="Fecha de ingreso:" />
+                            <p:calendar id="calendarNacimiento" value="#{capacitadorBean.capacitador.fechaIngreso}" locale="es" 
+                                        navigator="true" pattern="dd-MM-yyyy" />
+                            <p:outputLabel for="telefonoOfinica" value="Teléfono oficina:" />
+                            <p:inputMask id="telefonoOfinica" value="#{capacitadorBean.capacitador.telefonoOficina}" mask="(099) 999-999"  />
+                            <p:outputLabel value="Extensión oficina:" />
+                            <p:inputText value="#{capacitadorBean.capacitador.extTelefonoOficina}" onkeydown="return validarNumeros(event)"/>
+
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1 :formDataTable" actionListener="#{capacitadorBean.guardarCapacitador()}" value="Guardar"/>
+                            <!-- Para poder validar que la cadena solo contenga caracteres alfabeticos se puede utilizar los atributos
+                            1. onkeydown.- permite ingresar solo letras con excepcion de la ñ, despalzarse a la izquierda y derecha, ademas de 
+                            ir al inicio o al final de una cadena.
+                            2. onkeypress.- permite ingreasar letras inclutyendo la ñ se necesita ya nada mas. 
+                            --> 
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear un Capacitador _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver un Capacitador _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formVer">
+                    <p:dialog header="Datos del capacitador" widgetVar="Ver" modal="true" height="480" width="350">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <p:outputLabel style="font-weight:bold;" value="Nombres:"/>
+                            <p:outputLabel value="#{capacitadorBean.capacitador.nombre}"/>
+                            <p:outputLabel style="font-weight:bold;" value="Apellidos:"/>
+                            <p:outputLabel value="#{capacitadorBean.capacitador.apellido}"/>
+                            <p:outputLabel style="font-weight:bold;" value="Identificación:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.cedula}"/>
+                            <p:outputLabel style="font-weight:bold;" value="Fecha de nacimiento:"/>
+                            <p:outputLabel value="#{capacitadorBean.capacitador.fechaNacimiento}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel style="font-weight:bold;" value="Dirección:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.direccion}"/>
+                            <p:outputLabel style="font-weight:bold;" value="Teléfono domiciliario:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.telefonoDomicilio}" />
+                            <p:outputLabel style="font-weight:bold;" value="Celular:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.celular}"/>
+                            <p:outputLabel style="font-weight:bold;" value="E-mail:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.correo}"/>
+                            <p:outputLabel style="font-weight:bold;" value="Cargo:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.cargo}"/>  
+                            <p:outputLabel style="font-weight:bold;" value="Fecha de ingreso:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.fechaIngreso}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel style="font-weight:bold;" value="Teléfono oficina:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.telefonoOficina}" />
+                            <p:outputLabel style="font-weight:bold;" value="Extensión oficina:" />
+                            <p:outputLabel value="#{capacitadorBean.capacitador.extTelefonoOficina}" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Ver un Capacitador  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Editar un Capacitador _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEditar">
+                    <p:dialog header="Editar capacitador" widgetVar="Editar" modal="true" height="500" width="400">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <p:outputLabel for="nombres" value="Nombres:"/>
+                            <p:inputText id="nombres"  value="#{capacitadorBean.capacitador.nombre}" 
+                                         required="true" label="Nombres" requiredMessage="Especifique el nombre del capacitador" 
+                                         onkeydown="return validarLetras(event)"/>
+                            <p:outputLabel for="apellidos" value="Apellidos:"/>
+                            <p:inputText id="apellidos"  value="#{capacitadorBean.capacitador.apellido}" 
+                                         required="true" label="Apellidos" requiredMessage="Especifique el apellido del capacitador" 
+                                         onkeydown="return validarLetras(event)"/>
+                            <p:outputLabel for="cedula" value="Tipo de identificación:" />
+                            <p:selectOneMenu value="#{capacitadorBean.capacitador.tipoIdentificacion}" style="width:100%;">
+                                <f:selectItem itemLabel="Cédula" itemValue="1"/>
+                                <f:selectItem itemLabel="Pasaporte" itemValue="2"/>
+                            </p:selectOneMenu>
+                            <!--  -->
+                            <p:inputText id="cedula" value="#{capacitadorBean.capacitador.cedula}" required="true" 
+                                         label="Cedula" requiredMessage="Especifique la cÃ©dula del capacitador" 
+                                         onkeypress="return validarHistoriaClinica(event)"/>
+                            <p:outputLabel value="Fecha de nacimiento:"/>
+                            <p:calendar id="calendarIngreso" value="#{capacitadorBean.capacitador.fechaNacimiento}" 
+                                        locale="es" navigator="true" pattern="dd-MM-yyyy" />
+                            <p:outputLabel for="direccion" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{capacitadorBean.capacitador.direccion}" 
+                                         required="true" label="Direccion" requiredMessage="Especifique la dirección del capacitador"/>
+                            <p:outputLabel value="Teléfono domiciliario:" />
+                            <p:inputMask value="#{capacitadorBean.capacitador.telefonoDomicilio}" mask="(099) 999-999" />
+                            <p:outputLabel for="celular" value="Celular:" />
+                            <p:inputMask id="celular" value="#{capacitadorBean.capacitador.celular}" mask="0999-999-999" 
+                                         required="true" label="Celular" requiredMessage="Especifique el celular del capacitador"/>
+                            <p:outputLabel for="correo" value="E-mail:" />
+                            <p:inputText id="correo" value="#{capacitadorBean.capacitador.correo}" required="true" 
+                                         label="Correo" requiredMessage="Especifique el correo del capacitador" onchange="validarEmail(this)" 
+                                         onkeypress="return validarLetrasEmail(event)" placeholder="ejemplo@mail.com"/>
+                            <p:outputLabel for="cargo" value="Cargo:" />
+                            <p:inputText id="cargo" value="#{capacitadorBean.capacitador.cargo}" required="true" 
+                                         label="Cargo" requiredMessage="Especifique el cargo del capacitador"/>  
+                            <p:outputLabel value="Fecha de ingreso:" />
+                            <p:calendar id="calendarNacimiento" value="#{capacitadorBean.capacitador.fechaIngreso}" 
+                                        locale="es" navigator="true" pattern="dd-MM-yyyy" />
+                            <p:outputLabel for="telefonoOfinica" value="Teléfono oficina:" />
+                            <p:inputMask id="telefonoOfinica" value="#{capacitadorBean.capacitador.telefonoOficina}" 
+                                         mask="(099) 999-999" />
+                            <p:outputLabel value="Extensión oficina:" />
+                            <p:inputText value="#{capacitadorBean.capacitador.extTelefonoOficina}" 
+                                         onkeydown="return validarNumeros(event)" />
+                            <p:commandButton value="Cancelar" onclick="reload();" />
+                            <p:commandButton update="msgs1 :formDataTable" action="#{capacitadorBean.editarCapacitador()}" 
+                                             value="Guardar"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Editar un Capacitador  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar un Capacitador _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminar">
+                    <p:dialog header="Eliminar capacitador" widgetVar="Eliminar" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <h:outputLabel class="txtLabel" value="¿Está seguro de eliminar al capacitador &nbsp; 
+                                           #{capacitadorBean.capacitador.nombre} 
+                                           ' '#{capacitadorBean.capacitador.apellido}?" />
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton action="#{capacitadorBean.eliminarCapacitador()}" value="Eliminar"  
+                                             update=":formDataTable" onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar un Capacitador _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+        </ui:composition>   
+
+    </h:body>
+</html>

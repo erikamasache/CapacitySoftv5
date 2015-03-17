@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h2 class="titulos_tablas">Mis capacitaciones</h2> 
+
+                    <h:form id="formCapCapacitados"> 
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="registra"
+                                     value="#{misCapacitacionesCapacitadoBean.listaCapacitaciones}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true" >
+
+                            <p:column style="width:20%" headerText="Tema">
+                                <h:outputText value="#{registra.capacitacionId.tema}" />
+                            </p:column>
+
+                            <p:column style="width:7.5%" headerText="Fecha inicio">
+                                <h:outputText value="#{registra.capacitacionId.fechaInicio}"  >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column style="width:7%" headerText="Fecha fin">
+                                <h:outputText value="#{registra.capacitacionId.fechaFin}"  >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column> 
+
+                            <p:column style="width:8%" headerText="Horario">
+                                <h:outputText value="#{registra.capacitacionId.horaInicio}" >
+                                    <f:convertDateTime pattern="HH:mm" timeZone="GMT-5"/>
+                                </h:outputText>
+                                <p:outputLabel value=" - "/>
+                                <h:outputText value="#{registra.capacitacionId.horaFin}" >
+                                    <f:convertDateTime pattern="HH:mm" timeZone="GMT-5"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column style="width: 10%" headerText="Asistió?">
+                                <h:outputText value="#{misCapacitacionesCapacitadoBean.obtenerAsistencia(registra)}" />
+                            </p:column>
+
+                            <!-- lista de iconos  jqueryui.com/themeroller/
+                           http://www.petefreitag.com/cheatsheets/jqueryui-icons/
+                           http://jquery-ui.googlecode.com/svn/tags/1.6rc5/tests/static/icons.html -->   
+                            <p:column style="width:15em"> 
+                                <p:commandButton id="selectCapacitadores" value="Capacitadores" title="Capacitadores" action="#{capacitadoresBean.obtenerCapacitacion(registra.capacitacionId)}"/>
+
+                                <p:commandButton id="selectRecursos" value="Recursos" title="Recursos" action="#{recursosBean.obtenerCapacitacion(registra.capacitacionId)}"/>
+                            </p:column>
+                            <p:column style="width:5.7em"> 
+                                <p:commandButton id="modalVerCap" update=":formCrearCap" icon="ui-icon-contact"  
+                                                 title="Ver Datos" oncomplete="PF('CrearCap').show();" actionListener="#{misCapacitacionesCapacitadoBean.obtenerCap(registra.capacitacionId)}">
+                                </p:commandButton>
+
+                            </p:column>
+                        </p:dataTable> 
+                    </h:form>
+
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Ver una Capacitacion _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrearCap">
+                    <p:dialog header="Capacitacion" widgetVar="CrearCap" modal="true" height="230">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid id="panelDatos1" columns="2">
+                            <p:outputLabel style="font-weight:bold;" for="tema" value="Tema:" />
+                            <p:outputLabel id="tema" value="#{misCapacitacionesCapacitadoBean.capacitacion.tema}" />
+                            <p:outputLabel style="font-weight:bold;" value="Lugar:" />
+                            <p:outputLabel value="#{misCapacitacionesCapacitadoBean.capacitacion.lugar}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4">
+                            <p:outputLabel style="font-weight:bold;" value="Fecha:" />
+                            <h:outputText value="#{misCapacitacionesCapacitadoBean.capacitacion.fechaInicio}"  >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                            <p:outputLabel style="font-weight:bold;" value="-" />
+                            <h:outputText value="#{misCapacitacionesCapacitadoBean.capacitacion.fechaFin}"  >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4">
+                            <p:outputLabel style="font-weight:bold;" value="Horario:" />
+                            <h:outputText value="#{misCapacitacionesCapacitadoBean.capacitacion.horaInicio}"  >
+                                <f:convertDateTime pattern="HH:mm" />
+                            </h:outputText>
+                            <p:outputLabel style="font-weight:bold;" value="-" />
+                            <h:outputText value="#{misCapacitacionesCapacitadoBean.capacitacion.horaFin}"  > 
+                                <f:convertDateTime pattern="HH:mm" />
+                            </h:outputText>
+                            <p:outputLabel style="font-weight:bold;" value="Estado: " />
+                            <p:outputLabel value="#{misCapacitacionesCapacitadoBean.activa}" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel style="font-weight:bold;" value="Observaciones"/>
+                            <p:outputLabel value="#{misCapacitacionesCapacitadoBean.capacitacion.observaciones}" style="width: 360px; height: 100px"/>                                            
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal ver un Documento _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

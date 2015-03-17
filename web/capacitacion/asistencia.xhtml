@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h2 class="titulos_tablas">Recursos</h2> 
+                    <h:form id="formC">                    
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="cap"
+                                     value="#{calendarioBean.listaCapacitaciones}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:45%" headerText="Tema">
+                                <h:outputText value="#{cap.tema}" />
+                            </p:column>
+
+                            <p:column style="width:12%" headerText="Lugar">
+                                <h:outputText value="#{cap.lugar}" />                             
+                            </p:column>
+
+                            <p:column style="width:7.5%" headerText="Fecha inicio">
+                                <h:outputText value="#{cap.fechaInicio}"  >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column style="width:7%" headerText="Fecha fin">
+                                <h:outputText value="#{cap.fechaFin}"  >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column> 
+
+                            <p:column style="width:8%" headerText="Horario">
+                                <h:outputText value="#{cap.horaInicio}" >
+                                    <f:convertDateTime pattern="HH:mm" timeZone="GMT-5"/>
+                                </h:outputText>
+                                <p:outputLabel value=" - "/>
+                                <h:outputText value="#{cap.horaFin}" >
+                                    <f:convertDateTime pattern="HH:mm" timeZone="GMT-5"/>
+                                </h:outputText>
+                            </p:column> 
+
+                            <p:column style="width:5.5em"> 
+                                <p:commandButton id="selectRecursos" value="Recursos" title="Recursos" action="#{recursoBean.obtenerCapacitacion(cap)}"/>
+                            </p:column>
+                        </p:dataTable> 
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Capacitaciones _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

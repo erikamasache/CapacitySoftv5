@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:body>
+
+        <ui:composition template="./../WEB-INF/base.xhtml">
+
+            <ui:define name="content">
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* INICIO Tabla Carreras _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <div class="contenedor">
+                    <h:form id="atras">
+                        <p:commandButton icon=".ui-icon-arrowreturnthick-1-w" value="Atras" action="sector?faces-redirect=true"/>
+                    </h:form>
+                    <h3 class="titulos_tablas">Carreras</h3>
+                    <div class="botones">
+                        <h:form id="crear">
+                            <p:commandButton id="selectCrear" update=":formCrear" actionListener="#{carreraBean.instanciarCarrera()}"
+                                             oncomplete="PF('Crear').show();" value="Crear">
+                            </p:commandButton>
+                        </h:form>                                      
+                    </div>
+                    <h:form id="formCarr">
+                        <p:dataTable widgetVar="capTable" id="dataTable" var="car"
+                                     value="#{sectorBean.carreraBean.listaCarreras}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" editable="true" rendered="true">
+
+                            <p:column style="width:20%" headerText="Nombre">
+                                <h:outputText value="#{car.nombre}" />
+                            </p:column>
+
+                            <p:column style="width:20%" headerText="Coordinador">
+                                <h:outputText value="#{car.coordinador}" />
+                            </p:column>  
+
+                            <p:column style="width:4%"> 
+                                <h:form id="formVerCap">                    
+                                    <p:commandButton id="modalEditar" update=":formEditar" icon="ui-icon-pencil" oncomplete="PF('Editar').show();" title="Editar Datos">
+                                        <f:setPropertyActionListener value="#{car}" target="#{sectorBean.carreraBean.carrera}"/>
+                                    </p:commandButton>
+
+                                    <p:commandButton id="selectEliminar" update=":formEliminar" 
+                                                     oncomplete="PF('Eliminar').show();" icon="ui-icon-trash" title="Eliminar" >
+                                        <f:setPropertyActionListener value="#{car}" target="#{sectorBean.carreraBean.carrera}"/>
+                                    </p:commandButton>
+                                </h:form>
+                            </p:column>
+
+                        </p:dataTable> 
+                    </h:form>
+                </div>
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_* FIN Tabla Carreras _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal crear una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formCrear">
+                    <p:dialog header="Nueva Carrera" widgetVar="Crear" modal="true" height="110">  
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel for="nombre" value="Nombres:"/>
+                            <p:inputText id="nombre" value="#{sectorBean.carreraBean.carrera.nombre}" required="true" requiredMessage="Especifique el nombre de la carrera" onkeypress="return validarLetras(event)"/> 
+                            <p:outputLabel for="coordinador" value="Coordinador:"/>
+                            <p:inputText id="coordinador" value="#{sectorBean.carreraBean.carrera.coordinador}" required="true" requiredMessage="Especifique el nombre del coordinador de la carrera" onkeypress="return validarLetras(event)"/> 
+                            <p:commandButton value="Cancelar" onclick="reload()" />
+                            <p:commandButton update="msgs1 :formCarr" action="#{sectorBean.carreraBean.guardarCarrera()}" value="Guardar" />
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Crear una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Editar una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEditar">
+                    <p:dialog header="Editar carrera" widgetVar="Editar" modal="true" height="110">
+                        <p:growl id="msgs1"/>
+                        <h:panelGrid class="panel" columns="2" >
+                            <p:outputLabel value="Nombre: " />
+                            <p:inputText value="#{sectorBean.carreraBean.carrera.nombre}" required="true" requiredMessage="Especifique el nombre de la carrera" onkeypress="return validarLetras(event)" />
+                            <p:outputLabel value="Coordinador: " />
+                            <p:inputText value="#{sectorBean.carreraBean.carrera.coordinador}" required="true" requiredMessage="Especifique el nombre del coordinador de la carrera" onkeypress="return validarLetras(event)" />
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton update="msgs1 :formCarr" action="#{sectorBean.carreraBean.editarCarrera()}" value="Guardar"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_  FIN Modal Editar una Carrera  *_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ INICIO Modal Eliminar una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+                <h:form id="formEliminar">
+                    <p:dialog header="Eliminar carrera" widgetVar="Eliminar" modal="true" height="100">
+                        <h:panelGrid class="panel" columns="2" >
+                            <h:outputLabel value="¿Está seguro de eliminar la carrera &nbsp; #{sectorBean.carreraBean.carrera.nombre}?"/>
+                            <br></br>
+                            <p:commandButton value="Cancelar" onclick="reload();"/>
+                            <p:commandButton action="#{sectorBean.carreraBean.eliminarCarrera()}" value="Aceptar"  onclick="reload();"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <!--_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_ FIN Modal Eliminar una Carrera _*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*-->
+
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>
